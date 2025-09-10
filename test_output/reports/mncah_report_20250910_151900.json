@@ -1,0 +1,1090 @@
+{
+  "report_metadata": {
+    "generated_at": "2025-09-10T15:19:00.613462",
+    "data_overview": {
+      "total_records": 48,
+      "countries": [
+        "Kenya",
+        "Uganda",
+        "Tanzania",
+        "Rwanda",
+        "Ethiopia",
+        "Ghana",
+        "Nigeria",
+        "Malawi"
+      ],
+      "years": [
+        2015,
+        2016,
+        2017,
+        2018,
+        2019,
+        2020
+      ],
+      "indicators": [
+        "maternal_mortality_ratio",
+        "neonatal_mortality_rate",
+        "under5_mortality_rate",
+        "antenatal_care_coverage",
+        "skilled_birth_attendance",
+        "vaccination_coverage_dpt3",
+        "stunting_prevalence",
+        "wasting_prevalence"
+      ]
+    }
+  },
+  "summary_statistics": {
+    "maternal_mortality_ratio": {
+      "count": 48,
+      "mean": 405.875,
+      "std": 164.54238605450766,
+      "min": 215.0,
+      "max": 814.0,
+      "median": 326.0
+    },
+    "neonatal_mortality_rate": {
+      "count": 48,
+      "mean": 23.0,
+      "std": 5.709268313965553,
+      "min": 12.0,
+      "max": 37.0,
+      "median": 22.5
+    },
+    "under5_mortality_rate": {
+      "count": 48,
+      "mean": 61.1875,
+      "std": 17.205462084231126,
+      "min": 39.0,
+      "max": 109.0,
+      "median": 58.5
+    },
+    "antenatal_care_coverage": {
+      "count": 48,
+      "mean": 79.47916666666667,
+      "std": 16.778899595361004,
+      "min": 51.0,
+      "max": 99.0,
+      "median": 80.0
+    },
+    "skilled_birth_attendance": {
+      "count": 48,
+      "mean": 74.0625,
+      "std": 14.960097635931248,
+      "min": 43.0,
+      "max": 96.0,
+      "median": 75.0
+    },
+    "vaccination_coverage_dpt3": {
+      "count": 48,
+      "mean": 86.77083333333333,
+      "std": 11.361074985347779,
+      "min": 58.0,
+      "max": 99.0,
+      "median": 90.0
+    },
+    "stunting_prevalence": {
+      "count": 48,
+      "mean": 30.75,
+      "std": 6.560455355239078,
+      "min": 16.8,
+      "max": 40.4,
+      "median": 32.55
+    },
+    "wasting_prevalence": {
+      "count": 48,
+      "mean": 4.8125,
+      "std": 2.786259980843687,
+      "min": 1.7,
+      "max": 10.8,
+      "median": 3.8499999999999996
+    }
+  },
+  "analysis_results": {
+    "trends": {
+      "maternal_mortality_ratio": {
+        "overall_trend": "improving",
+        "trend_coefficient": -13.999999999999332,
+        "data_points": 48,
+        "year_range": [
+          2015,
+          2020
+        ],
+        "value_range": [
+          215.0,
+          814.0
+        ],
+        "latest_value": 435.0,
+        "earliest_value": 510.0,
+        "country_trends": {
+          "Kenya": {
+            "trend_coefficient": -14.999999999998602,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Uganda": {
+            "trend_coefficient": -10.999999999998956,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Tanzania": {
+            "trend_coefficient": -15.999999999998519,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Rwanda": {
+            "trend_coefficient": -14.999999999998611,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Ethiopia": {
+            "trend_coefficient": -12.999999999998774,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Ghana": {
+            "trend_coefficient": -8.999999999999151,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Nigeria": {
+            "trend_coefficient": -18.99999999999822,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Malawi": {
+            "trend_coefficient": -13.99999999999869,
+            "trend_direction": "improving",
+            "data_points": 6
+          }
+        }
+      },
+      "neonatal_mortality_rate": {
+        "overall_trend": "improving",
+        "trend_coefficient": -1.0000000000000562,
+        "data_points": 48,
+        "year_range": [
+          2015,
+          2020
+        ],
+        "value_range": [
+          12.0,
+          37.0
+        ],
+        "latest_value": 17.0,
+        "earliest_value": 22.0,
+        "country_trends": {
+          "Kenya": {
+            "trend_coefficient": -0.9999999999999051,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Uganda": {
+            "trend_coefficient": -0.9999999999999079,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Tanzania": {
+            "trend_coefficient": -0.9999999999999071,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Rwanda": {
+            "trend_coefficient": -0.9999999999999062,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Ethiopia": {
+            "trend_coefficient": -0.9999999999999063,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Ghana": {
+            "trend_coefficient": -0.9999999999999071,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Nigeria": {
+            "trend_coefficient": -0.9999999999999065,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Malawi": {
+            "trend_coefficient": -0.9999999999999069,
+            "trend_direction": "improving",
+            "data_points": 6
+          }
+        }
+      },
+      "under5_mortality_rate": {
+        "overall_trend": "improving",
+        "trend_coefficient": -2.1250000000002447,
+        "data_points": 48,
+        "year_range": [
+          2015,
+          2020
+        ],
+        "value_range": [
+          39.0,
+          109.0
+        ],
+        "latest_value": 39.0,
+        "earliest_value": 49.0,
+        "country_trends": {
+          "Kenya": {
+            "trend_coefficient": -1.9999999999998113,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Uganda": {
+            "trend_coefficient": -1.9999999999998135,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Tanzania": {
+            "trend_coefficient": -1.9999999999998148,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Rwanda": {
+            "trend_coefficient": -1.9999999999998141,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Ethiopia": {
+            "trend_coefficient": -1.9999999999998148,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Ghana": {
+            "trend_coefficient": -1.999999999999813,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Nigeria": {
+            "trend_coefficient": -2.9999999999997176,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Malawi": {
+            "trend_coefficient": -1.9999999999998135,
+            "trend_direction": "improving",
+            "data_points": 6
+          }
+        }
+      },
+      "antenatal_care_coverage": {
+        "overall_trend": "worsening",
+        "trend_coefficient": 1.4321428571426562,
+        "data_points": 48,
+        "year_range": [
+          2015,
+          2020
+        ],
+        "value_range": [
+          51.0,
+          99.0
+        ],
+        "latest_value": 73.0,
+        "earliest_value": 58.0,
+        "country_trends": {
+          "Kenya": {
+            "trend_coefficient": 2.9999999999997238,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Uganda": {
+            "trend_coefficient": 0.7714285714285176,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Tanzania": {
+            "trend_coefficient": 1.9999999999998157,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Rwanda": {
+            "trend_coefficient": 0.2285714285714126,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Ethiopia": {
+            "trend_coefficient": 1.9999999999998141,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Ghana": {
+            "trend_coefficient": 0.9999999999999137,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Nigeria": {
+            "trend_coefficient": 1.9999999999998164,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Malawi": {
+            "trend_coefficient": 0.45714285714281233,
+            "trend_direction": "worsening",
+            "data_points": 6
+          }
+        }
+      },
+      "skilled_birth_attendance": {
+        "overall_trend": "worsening",
+        "trend_coefficient": 1.8749999999999367,
+        "data_points": 48,
+        "year_range": [
+          2015,
+          2020
+        ],
+        "value_range": [
+          43.0,
+          96.0
+        ],
+        "latest_value": 77.0,
+        "earliest_value": 62.0,
+        "country_trends": {
+          "Kenya": {
+            "trend_coefficient": 2.999999999999724,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Uganda": {
+            "trend_coefficient": 1.9999999999998188,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Tanzania": {
+            "trend_coefficient": 1.9999999999998208,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Rwanda": {
+            "trend_coefficient": 0.9999999999999144,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Ethiopia": {
+            "trend_coefficient": 1.9999999999998141,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Ghana": {
+            "trend_coefficient": 1.9999999999998193,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Nigeria": {
+            "trend_coefficient": 1.9999999999998148,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Malawi": {
+            "trend_coefficient": 0.9999999999999137,
+            "trend_direction": "worsening",
+            "data_points": 6
+          }
+        }
+      },
+      "vaccination_coverage_dpt3": {
+        "overall_trend": "worsening",
+        "trend_coefficient": 1.3464285714286097,
+        "data_points": 48,
+        "year_range": [
+          2015,
+          2020
+        ],
+        "value_range": [
+          58.0,
+          99.0
+        ],
+        "latest_value": 95.0,
+        "earliest_value": 85.0,
+        "country_trends": {
+          "Kenya": {
+            "trend_coefficient": 1.9999999999998141,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Uganda": {
+            "trend_coefficient": 1.9999999999998237,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Tanzania": {
+            "trend_coefficient": 0.9999999999999137,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Rwanda": {
+            "trend_coefficient": 0.2285714285714126,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Ethiopia": {
+            "trend_coefficient": 1.9999999999998186,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Ghana": {
+            "trend_coefficient": 0.9999999999999122,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Nigeria": {
+            "trend_coefficient": 1.9999999999998181,
+            "trend_direction": "worsening",
+            "data_points": 6
+          },
+          "Malawi": {
+            "trend_coefficient": 0.5428571428571057,
+            "trend_direction": "worsening",
+            "data_points": 6
+          }
+        }
+      },
+      "stunting_prevalence": {
+        "overall_trend": "improving",
+        "trend_coefficient": -0.5500000000000808,
+        "data_points": 48,
+        "year_range": [
+          2015,
+          2020
+        ],
+        "value_range": [
+          16.8,
+          40.4
+        ],
+        "latest_value": 24.2,
+        "earliest_value": 26.2,
+        "country_trends": {
+          "Kenya": {
+            "trend_coefficient": -0.3999999999999614,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Uganda": {
+            "trend_coefficient": -0.4999999999999531,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Tanzania": {
+            "trend_coefficient": -0.4999999999999515,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Rwanda": {
+            "trend_coefficient": -0.8999999999999134,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Ethiopia": {
+            "trend_coefficient": -0.5999999999999438,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Ghana": {
+            "trend_coefficient": -0.39999999999996216,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Nigeria": {
+            "trend_coefficient": -0.49999999999995093,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Malawi": {
+            "trend_coefficient": -0.5999999999999432,
+            "trend_direction": "improving",
+            "data_points": 6
+          }
+        }
+      },
+      "wasting_prevalence": {
+        "overall_trend": "improving",
+        "trend_coefficient": -0.22500000000002,
+        "data_points": 48,
+        "year_range": [
+          2015,
+          2020
+        ],
+        "value_range": [
+          1.7,
+          10.8
+        ],
+        "latest_value": 3.0,
+        "earliest_value": 4.0,
+        "country_trends": {
+          "Kenya": {
+            "trend_coefficient": -0.1999999999999814,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Uganda": {
+            "trend_coefficient": -0.19999999999998141,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Tanzania": {
+            "trend_coefficient": -0.19999999999998122,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Rwanda": {
+            "trend_coefficient": -0.09999999999999067,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Ethiopia": {
+            "trend_coefficient": -0.3999999999999622,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Ghana": {
+            "trend_coefficient": -0.19999999999998133,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Nigeria": {
+            "trend_coefficient": -0.3999999999999628,
+            "trend_direction": "improving",
+            "data_points": 6
+          },
+          "Malawi": {
+            "trend_coefficient": -0.0999999999999907,
+            "trend_direction": "improving",
+            "data_points": 6
+          }
+        }
+      }
+    },
+    "country_comparison": {
+      "maternal_mortality_ratio": {
+        "year": 2020,
+        "countries_count": 8,
+        "best_performing": {
+          "country": "Rwanda",
+          "value": 215.0
+        },
+        "worst_performing": {
+          "country": "Nigeria",
+          "value": 719.0
+        },
+        "average": 370.875,
+        "median": 284.5,
+        "std_deviation": 166.2282746277368,
+        "country_values": {
+          "Kenya": 435,
+          "Uganda": 281,
+          "Tanzania": 476,
+          "Rwanda": 215,
+          "Ethiopia": 288,
+          "Ghana": 274,
+          "Nigeria": 719,
+          "Malawi": 279
+        }
+      },
+      "neonatal_mortality_rate": {
+        "year": 2020,
+        "countries_count": 8,
+        "best_performing": {
+          "country": "Rwanda",
+          "value": 12.0
+        },
+        "worst_performing": {
+          "country": "Nigeria",
+          "value": 32.0
+        },
+        "average": 20.5,
+        "median": 20.0,
+        "std_deviation": 5.756983337031396,
+        "country_values": {
+          "Kenya": 17,
+          "Uganda": 22,
+          "Tanzania": 20,
+          "Rwanda": 12,
+          "Ethiopia": 23,
+          "Ghana": 20,
+          "Nigeria": 32,
+          "Malawi": 18
+        }
+      },
+      "under5_mortality_rate": {
+        "year": 2020,
+        "countries_count": 8,
+        "best_performing": {
+          "country": "Kenya",
+          "value": 39.0
+        },
+        "worst_performing": {
+          "country": "Nigeria",
+          "value": 94.0
+        },
+        "average": 55.875,
+        "median": 54.0,
+        "std_deviation": 16.965826997652833,
+        "country_values": {
+          "Kenya": 39,
+          "Uganda": 54,
+          "Tanzania": 57,
+          "Rwanda": 40,
+          "Ethiopia": 57,
+          "Ghana": 52,
+          "Nigeria": 94,
+          "Malawi": 54
+        }
+      },
+      "antenatal_care_coverage": {
+        "year": 2020,
+        "countries_count": 8,
+        "best_performing": {
+          "country": "Tanzania",
+          "value": 61.0
+        },
+        "worst_performing": {
+          "country": "Uganda",
+          "value": 99.0
+        },
+        "average": 83.0,
+        "median": 82.5,
+        "std_deviation": 15.297058540778355,
+        "country_values": {
+          "Kenya": 73,
+          "Uganda": 99,
+          "Tanzania": 61,
+          "Rwanda": 99,
+          "Ethiopia": 72,
+          "Ghana": 92,
+          "Nigeria": 71,
+          "Malawi": 97
+        }
+      },
+      "skilled_birth_attendance": {
+        "year": 2020,
+        "countries_count": 8,
+        "best_performing": {
+          "country": "Nigeria",
+          "value": 53.0
+        },
+        "worst_performing": {
+          "country": "Rwanda",
+          "value": 96.0
+        },
+        "average": 78.75,
+        "median": 80.5,
+        "std_deviation": 14.557766704703418,
+        "country_values": {
+          "Kenya": 77,
+          "Uganda": 84,
+          "Tanzania": 74,
+          "Rwanda": 96,
+          "Ethiopia": 65,
+          "Ghana": 89,
+          "Nigeria": 53,
+          "Malawi": 92
+        }
+      },
+      "vaccination_coverage_dpt3": {
+        "year": 2020,
+        "countries_count": 8,
+        "best_performing": {
+          "country": "Nigeria",
+          "value": 68.0
+        },
+        "worst_performing": {
+          "country": "Rwanda",
+          "value": 99.0
+        },
+        "average": 90.125,
+        "median": 93.0,
+        "std_deviation": 10.412046594484405,
+        "country_values": {
+          "Kenya": 95,
+          "Uganda": 92,
+          "Tanzania": 92,
+          "Rwanda": 99,
+          "Ethiopia": 82,
+          "Ghana": 94,
+          "Nigeria": 68,
+          "Malawi": 99
+        }
+      },
+      "stunting_prevalence": {
+        "year": 2020,
+        "countries_count": 8,
+        "best_performing": {
+          "country": "Ghana",
+          "value": 16.8
+        },
+        "worst_performing": {
+          "country": "Ethiopia",
+          "value": 37.4
+        },
+        "average": 29.375,
+        "median": 31.3,
+        "std_deviation": 6.602326429805958,
+        "country_values": {
+          "Kenya": 24.2,
+          "Uganda": 26.5,
+          "Tanzania": 32.2,
+          "Rwanda": 33.4,
+          "Ethiopia": 37.4,
+          "Ghana": 16.8,
+          "Nigeria": 30.4,
+          "Malawi": 34.1
+        }
+      },
+      "wasting_prevalence": {
+        "year": 2020,
+        "countries_count": 8,
+        "best_performing": {
+          "country": "Rwanda",
+          "value": 1.7
+        },
+        "worst_performing": {
+          "country": "Nigeria",
+          "value": 8.8
+        },
+        "average": 4.25,
+        "median": 3.35,
+        "std_deviation": 2.6256971863270366,
+        "country_values": {
+          "Kenya": 3.0,
+          "Uganda": 3.2,
+          "Tanzania": 3.5,
+          "Rwanda": 1.7,
+          "Ethiopia": 7.9,
+          "Ghana": 3.7,
+          "Nigeria": 8.8,
+          "Malawi": 2.2
+        }
+      }
+    },
+    "target_assessment": {
+      "maternal_mortality_ratio": {
+        "target_value": 70,
+        "latest_year": 2020,
+        "countries_assessed": 8,
+        "countries_meeting_target": 0,
+        "percentage_meeting_target": 0.0,
+        "average_value": 370.875,
+        "gap_to_target": 300.875,
+        "countries_on_track": [],
+        "countries_off_track": [
+          "Kenya",
+          "Uganda",
+          "Tanzania",
+          "Rwanda",
+          "Ethiopia",
+          "Ghana",
+          "Nigeria",
+          "Malawi"
+        ]
+      },
+      "neonatal_mortality_rate": {
+        "target_value": 12,
+        "latest_year": 2020,
+        "countries_assessed": 8,
+        "countries_meeting_target": 1,
+        "percentage_meeting_target": 12.5,
+        "average_value": 20.5,
+        "gap_to_target": 8.5,
+        "countries_on_track": [
+          "Rwanda"
+        ],
+        "countries_off_track": [
+          "Kenya",
+          "Uganda",
+          "Tanzania",
+          "Ethiopia",
+          "Ghana",
+          "Nigeria",
+          "Malawi"
+        ]
+      },
+      "under5_mortality_rate": {
+        "target_value": 25,
+        "latest_year": 2020,
+        "countries_assessed": 8,
+        "countries_meeting_target": 0,
+        "percentage_meeting_target": 0.0,
+        "average_value": 55.875,
+        "gap_to_target": 30.875,
+        "countries_on_track": [],
+        "countries_off_track": [
+          "Kenya",
+          "Uganda",
+          "Tanzania",
+          "Rwanda",
+          "Ethiopia",
+          "Ghana",
+          "Nigeria",
+          "Malawi"
+        ]
+      },
+      "stunting_prevalence": {
+        "target_value": 15,
+        "latest_year": 2020,
+        "countries_assessed": 8,
+        "countries_meeting_target": 0,
+        "percentage_meeting_target": 0.0,
+        "average_value": 29.375,
+        "gap_to_target": 14.375,
+        "countries_on_track": [],
+        "countries_off_track": [
+          "Kenya",
+          "Uganda",
+          "Tanzania",
+          "Rwanda",
+          "Ethiopia",
+          "Ghana",
+          "Nigeria",
+          "Malawi"
+        ]
+      },
+      "antenatal_care_coverage": {
+        "target_value": 90,
+        "latest_year": 2020,
+        "countries_assessed": 8,
+        "countries_meeting_target": 4,
+        "percentage_meeting_target": 50.0,
+        "average_value": 83.0,
+        "gap_to_target": -7.0,
+        "countries_on_track": [
+          "Kenya",
+          "Tanzania",
+          "Ethiopia",
+          "Nigeria"
+        ],
+        "countries_off_track": [
+          "Uganda",
+          "Rwanda",
+          "Ghana",
+          "Malawi"
+        ]
+      },
+      "skilled_birth_attendance": {
+        "target_value": 90,
+        "latest_year": 2020,
+        "countries_assessed": 8,
+        "countries_meeting_target": 6,
+        "percentage_meeting_target": 75.0,
+        "average_value": 78.75,
+        "gap_to_target": -11.25,
+        "countries_on_track": [
+          "Kenya",
+          "Uganda",
+          "Tanzania",
+          "Ethiopia",
+          "Ghana",
+          "Nigeria"
+        ],
+        "countries_off_track": [
+          "Rwanda",
+          "Malawi"
+        ]
+      },
+      "vaccination_coverage_dpt3": {
+        "target_value": 90,
+        "latest_year": 2020,
+        "countries_assessed": 8,
+        "countries_meeting_target": 2,
+        "percentage_meeting_target": 25.0,
+        "average_value": 90.125,
+        "gap_to_target": 0.125,
+        "countries_on_track": [
+          "Ethiopia",
+          "Nigeria"
+        ],
+        "countries_off_track": [
+          "Kenya",
+          "Uganda",
+          "Tanzania",
+          "Rwanda",
+          "Ghana",
+          "Malawi"
+        ]
+      }
+    },
+    "summary": {
+      "data_overview": {
+        "total_records": 48,
+        "countries": [
+          "Kenya",
+          "Uganda",
+          "Tanzania",
+          "Rwanda",
+          "Ethiopia",
+          "Ghana",
+          "Nigeria",
+          "Malawi"
+        ],
+        "years": [
+          2015,
+          2016,
+          2017,
+          2018,
+          2019,
+          2020
+        ],
+        "indicators_available": [
+          "maternal_mortality_ratio",
+          "neonatal_mortality_rate",
+          "under5_mortality_rate",
+          "antenatal_care_coverage",
+          "skilled_birth_attendance",
+          "vaccination_coverage_dpt3",
+          "stunting_prevalence",
+          "wasting_prevalence"
+        ]
+      },
+      "data_quality": {
+        "completeness": {
+          "maternal_mortality_ratio": {
+            "completeness_rate": 100.0,
+            "missing_values": 0
+          },
+          "neonatal_mortality_rate": {
+            "completeness_rate": 100.0,
+            "missing_values": 0
+          },
+          "under5_mortality_rate": {
+            "completeness_rate": 100.0,
+            "missing_values": 0
+          },
+          "antenatal_care_coverage": {
+            "completeness_rate": 100.0,
+            "missing_values": 0
+          },
+          "skilled_birth_attendance": {
+            "completeness_rate": 100.0,
+            "missing_values": 0
+          },
+          "vaccination_coverage_dpt3": {
+            "completeness_rate": 100.0,
+            "missing_values": 0
+          },
+          "stunting_prevalence": {
+            "completeness_rate": 100.0,
+            "missing_values": 0
+          },
+          "wasting_prevalence": {
+            "completeness_rate": 100.0,
+            "missing_values": 0
+          }
+        },
+        "consistency": {
+          "duplicate_records": 0
+        },
+        "outliers": {
+          "maternal_mortality_ratio": {
+            "outlier_count": 2,
+            "outlier_percentage": 4.166666666666666
+          },
+          "neonatal_mortality_rate": {
+            "outlier_count": 6,
+            "outlier_percentage": 12.5
+          },
+          "under5_mortality_rate": {
+            "outlier_count": 6,
+            "outlier_percentage": 12.5
+          },
+          "antenatal_care_coverage": {
+            "outlier_count": 0,
+            "outlier_percentage": 0.0
+          },
+          "skilled_birth_attendance": {
+            "outlier_count": 0,
+            "outlier_percentage": 0.0
+          },
+          "vaccination_coverage_dpt3": {
+            "outlier_count": 3,
+            "outlier_percentage": 6.25
+          },
+          "stunting_prevalence": {
+            "outlier_count": 0,
+            "outlier_percentage": 0.0
+          },
+          "wasting_prevalence": {
+            "outlier_count": 6,
+            "outlier_percentage": 12.5
+          }
+        }
+      },
+      "basic_statistics": {
+        "maternal_mortality_ratio": {
+          "count": 48,
+          "mean": 405.875,
+          "std": 164.54238605450766,
+          "min": 215.0,
+          "max": 814.0,
+          "median": 326.0
+        },
+        "neonatal_mortality_rate": {
+          "count": 48,
+          "mean": 23.0,
+          "std": 5.709268313965553,
+          "min": 12.0,
+          "max": 37.0,
+          "median": 22.5
+        },
+        "under5_mortality_rate": {
+          "count": 48,
+          "mean": 61.1875,
+          "std": 17.205462084231126,
+          "min": 39.0,
+          "max": 109.0,
+          "median": 58.5
+        },
+        "antenatal_care_coverage": {
+          "count": 48,
+          "mean": 79.47916666666667,
+          "std": 16.778899595361004,
+          "min": 51.0,
+          "max": 99.0,
+          "median": 80.0
+        },
+        "skilled_birth_attendance": {
+          "count": 48,
+          "mean": 74.0625,
+          "std": 14.960097635931248,
+          "min": 43.0,
+          "max": 96.0,
+          "median": 75.0
+        },
+        "vaccination_coverage_dpt3": {
+          "count": 48,
+          "mean": 86.77083333333333,
+          "std": 11.361074985347779,
+          "min": 58.0,
+          "max": 99.0,
+          "median": 90.0
+        },
+        "stunting_prevalence": {
+          "count": 48,
+          "mean": 30.75,
+          "std": 6.560455355239078,
+          "min": 16.8,
+          "max": 40.4,
+          "median": 32.55
+        },
+        "wasting_prevalence": {
+          "count": 48,
+          "mean": 4.8125,
+          "std": 2.786259980843687,
+          "min": 1.7,
+          "max": 10.8,
+          "median": 3.8499999999999996
+        }
+      },
+      "previous_analyses": {
+        "available_analyses": [
+          "trends",
+          "country_comparison",
+          "target_assessment"
+        ],
+        "last_analysis_date": "2025-09-10T15:19:00.577720"
+      }
+    }
+  }
+}
