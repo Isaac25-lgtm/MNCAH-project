@@ -1,0 +1,411 @@
+{% extends "base.html" %}
+
+{% block title %}Login - MOH MNCAH Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .login-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        max-width: 900px;
+        width: 90%;
+    }
+
+    .login-header {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #1a4480 100%);
+        color: white;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .login-header h2 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.8rem;
+    }
+
+    .login-header p {
+        margin: 0.5rem 0 0 0;
+        opacity: 0.9;
+        font-size: 1.1rem;
+    }
+
+    .login-body {
+        padding: 2rem;
+    }
+
+    .form-floating {
+        margin-bottom: 1rem;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        padding: 1rem 0.75rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.25);
+    }
+
+    .btn-login {
+        background: linear-gradient(135deg, var(--primary-color) 0%, #1a4480 100%);
+        border: none;
+        border-radius: 25px;
+        padding: 12px 30px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: white;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .btn-login:hover {
+        background: linear-gradient(135deg, #1a4480 0%, var(--primary-color) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(44, 90, 160, 0.3);
+    }
+
+    .demo-accounts {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .demo-accounts h6 {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .account-demo {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .account-demo:hover {
+        border-color: var(--primary-color);
+        box-shadow: 0 2px 8px rgba(44, 90, 160, 0.1);
+    }
+
+    .account-demo strong {
+        color: var(--primary-color);
+    }
+
+    .features-list {
+        list-style: none;
+        padding: 0;
+    }
+
+    .features-list li {
+        padding: 0.5rem 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .features-list li i {
+        color: var(--success-color);
+        margin-right: 0.5rem;
+        width: 20px;
+    }
+
+    .flag-colors {
+        font-size: 0.8rem;
+    }
+
+    .flag-black { color: #000; }
+    .flag-yellow { color: #ffcd00; }
+    .flag-red { color: #ce1126; }
+
+    @media (max-width: 768px) {
+        .login-container {
+            margin: 1rem;
+            width: calc(100% - 2rem);
+        }
+        
+        .login-header, .login-body {
+            padding: 1.5rem;
+        }
+        
+        .features-list li {
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: left;
+        }
+        
+        .features-list li i {
+            margin-bottom: 0.25rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="login-header">
+        <div class="mb-3">
+            <i class="fas fa-heartbeat fa-3x"></i>
+        </div>
+        <h2>MOH MNCAH Dashboard</h2>
+        <p>Maternal, Neonatal, Child & Adolescent Health Analytics</p>
+        <small>Ministry of Health Uganda</small>
+    </div>
+    
+    <div class="login-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h5 class="mb-3">Sign In</h5>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                
+                <form id="loginForm" method="POST" action="{{ url_for('auth.login') }}">
+                    {{ csrf_token() }}
+                    
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="username" name="username" 
+                               placeholder="Username" required autocomplete="username"
+                               value="{{ request.form.username if request.form.username }}">
+                        <label for="username"><i class="fas fa-user me-2"></i>Username</label>
+                    </div>
+                    
+                    <div class="form-floating mb-3">
+                        <input type="password" class="form-control" id="password" name="password" 
+                               placeholder="Password" required autocomplete="current-password">
+                        <label for="password"><i class="fas fa-lock me-2"></i>Password</label>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="remember" name="remember" 
+                               {{ 'checked' if request.form.remember }}>
+                        <label class="form-check-label" for="remember">
+                            Remember me
+                        </label>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-login" id="loginBtn">
+                        <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                    </button>
+                </form>
+                
+                <div class="demo-accounts">
+                    <h6><i class="fas fa-info-circle me-2"></i>Demo Accounts</h6>
+                    
+                    <div class="account-demo" data-username="admin" data-password="admin123">
+                        <strong>Administrator Account</strong><br>
+                        <small class="text-muted">Username: admin | Password: admin123</small><br>
+                        <small class="text-success">✓ Can upload data and manage system</small>
+                    </div>
+                    
+                    <div class="account-demo" data-username="stakeholder" data-password="stakeholder123">
+                        <strong>Stakeholder Account</strong><br>
+                        <small class="text-muted">Username: stakeholder | Password: stakeholder123</small><br>
+                        <small class="text-info">✓ Can view data and generate reports</small>
+                    </div>
+                    
+                    <small class="text-muted">Click on an account above to auto-fill the login form</small>
+                </div>
+                
+                <div class="text-center mt-3">
+                    <p class="mb-0">
+                        <small class="text-muted">
+                            Don't have an account? 
+                            <a href="{{ url_for('auth.register') }}" class="text-decoration-none">Register here</a>
+                        </small>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <h5 class="mb-3">System Features</h5>
+                
+                <ul class="features-list">
+                    <li>
+                        <i class="fas fa-chart-line"></i>
+                        <div>
+                            <strong>MNCAH Analytics</strong><br>
+                            <small class="text-muted">Comprehensive analysis of 22 maternal and child health indicators</small>
+                        </div>
+                    </li>
+                    
+                    <li>
+                        <i class="fas fa-upload"></i>
+                        <div>
+                            <strong>Data Upload & Processing</strong><br>
+                            <small class="text-muted">Excel/CSV file processing with automatic validation</small>
+                        </div>
+                    </li>
+                    
+                    <li>
+                        <i class="fas fa-hospital"></i>
+                        <div>
+                            <strong>Facility Performance</strong><br>
+                            <small class="text-muted">Track performance across health facilities and districts</small>
+                        </div>
+                    </li>
+                    
+                    <li>
+                        <i class="fas fa-file-alt"></i>
+                        <div>
+                            <strong>Report Generation</strong><br>
+                            <small class="text-muted">PDF and Excel reports for stakeholders and decision makers</small>
+                        </div>
+                    </li>
+                    
+                    <li>
+                        <i class="fas fa-shield-alt"></i>
+                        <div>
+                            <strong>Data Quality Monitoring</strong><br>
+                            <small class="text-muted">Automated validation with color-coded quality indicators</small>
+                        </div>
+                    </li>
+                    
+                    <li>
+                        <i class="fas fa-chart-bar"></i>
+                        <div>
+                            <strong>Trend Analysis</strong><br>
+                            <small class="text-muted">Historical trends and performance comparisons</small>
+                        </div>
+                    </li>
+                </ul>
+                
+                <div class="mt-4 p-3 bg-light rounded">
+                    <h6 class="text-primary"><i class="fas fa-info-circle me-2"></i>About MNCAH</h6>
+                    <p class="mb-0 small">
+                        This system tracks key indicators across three categories:
+                        <strong>Antenatal Care (ANC)</strong>, <strong>Intrapartum Care</strong>, 
+                        and <strong>Postnatal Care (PNC)</strong> to improve maternal and child health outcomes in Uganda.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer with system info -->
+<div class="fixed-bottom">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center py-2">
+                    <small class="text-white-50">
+                        MOH MNCAH Dashboard v1.0.0 | 
+                        <span class="flag-colors">
+                            <span class="flag-black">●</span><span class="flag-yellow">●</span><span class="flag-red">●</span>
+                        </span>
+                        Ministry of Health Uganda
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Demo account quick fill
+    document.querySelectorAll('.account-demo').forEach(function(demo) {
+        demo.addEventListener('click', function() {
+            const username = this.dataset.username;
+            const password = this.dataset.password;
+            
+            document.getElementById('username').value = username;
+            document.getElementById('password').value = password;
+            
+            // Highlight the selected demo account
+            document.querySelectorAll('.account-demo').forEach(d => d.classList.remove('border-primary'));
+            this.classList.add('border-primary');
+            
+            // Show success message
+            MOH.showMessage('Demo account credentials filled. Click "Sign In" to continue.', 'info');
+        });
+    });
+    
+    // Form submission with loading state
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        const submitBtn = document.getElementById('loginBtn');
+        const originalText = submitBtn.innerHTML;
+        
+        // Show loading state
+        submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Signing in...';
+        submitBtn.disabled = true;
+        
+        // Let the form submit normally, but if using AJAX in future:
+        /*
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': MOH.csrfToken
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                MOH.showMessage(data.message, 'success');
+                setTimeout(() => {
+                    window.location.href = data.redirect || '/dashboard/';
+                }, 1000);
+            } else {
+                MOH.showMessage(data.message, 'error');
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Login error:', error);
+            MOH.showMessage('Login failed. Please try again.', 'error');
+            submitBtn.innerHTML = originalText;
+            submitBtn.disabled = false;
+        });
+        */
+    });
+    
+    // Auto-focus username field
+    document.getElementById('username').focus();
+    
+    // Handle Enter key in form fields
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('loginForm').submit();
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

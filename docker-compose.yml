@@ -1,0 +1,234 @@
+version: '3.8'
+
+services:
+  # MOH MNCAH Dashboard Application
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: moh-mncah-dashboard
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - FLASK_DEBUG=False
+      - DATABASE_URL=postgresql://moh_user:${DB_PASSWORD:-secure_password}@db:5432/moh_mncah_db
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY:-change_this_in_production}
+      - SESSION_COOKIE_SECURE=True
+      - LOG_TO_STDOUT=True
+    volumes:
+      - uploads_data:/app/uploads
+      - exports_data:/app/exports
+      - logs_data:/app/logs
+      - ./config:/app/config:ro
+    depends_on:
+      - db
+      - redis
+    networks:
+      - moh-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.moh-dashboard.rule=Host(`dashboard.health.go.ug`)"
+      - "traefik.http.routers.moh-dashboard.tls=true"
+      - "traefik.http.routers.moh-dashboard.tls.certresolver=letsencrypt"
+
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: moh-mncah-postgres
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=moh_mncah_db
+      - POSTGRES_USER=moh_user
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-secure_password}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF8 --lc-collate=C --lc-ctype=C
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init:/docker-entrypoint-initdb.d:ro
+      - ./database/backups:/backups
+    ports:
+      - "5432:5432"  # Remove in production
+    networks:
+      - moh-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U moh_user -d moh_mncah_db"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis Cache and Session Storage
+  redis:
+    image: redis:7-alpine
+    container_name: moh-mncah-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redis_secure_password}
+    volumes:
+      - redis_data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    ports:
+      - "6379:6379"  # Remove in production
+    networks:
+      - moh-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Nginx Reverse Proxy (Optional)
+  nginx:
+    image: nginx:alpine
+    container_name: moh-mncah-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - static_files:/var/www/static:ro
+    depends_on:
+      - web
+    networks:
+      - moh-network
+    profiles:
+      - production
+
+  # Background Task Worker (Optional)
+  worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: moh-mncah-worker
+    restart: unless-stopped
+    command: python -m celery worker -A app.tasks:celery --loglevel=info
+    environment:
+      - FLASK_ENV=production
+      - DATABASE_URL=postgresql://moh_user:${DB_PASSWORD:-secure_password}@db:5432/moh_mncah_db
+      - REDIS_URL=redis://redis:6379/0
+      - SECRET_KEY=${SECRET_KEY:-change_this_in_production}
+    volumes:
+      - uploads_data:/app/uploads
+      - exports_data:/app/exports
+      - logs_data:/app/logs
+    depends_on:
+      - db
+      - redis
+    networks:
+      - moh-network
+    profiles:
+      - production
+
+  # Monitoring with Prometheus (Optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: moh-mncah-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+    networks:
+      - moh-network
+    profiles:
+      - monitoring
+
+  # Grafana Dashboard (Optional)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: moh-mncah-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    depends_on:
+      - prometheus
+    networks:
+      - moh-network
+    profiles:
+      - monitoring
+
+  # Database Backup Service
+  backup:
+    image: postgres:15-alpine
+    container_name: moh-mncah-backup
+    restart: "no"
+    environment:
+      - PGPASSWORD=${DB_PASSWORD:-secure_password}
+    volumes:
+      - ./database/backups:/backups
+      - ./scripts/backup.sh:/backup.sh:ro
+    command: /backup.sh
+    depends_on:
+      - db
+    networks:
+      - moh-network
+    profiles:
+      - backup
+
+networks:
+  moh-network:
+    driver: bridge
+    name: moh-mncah-network
+
+volumes:
+  postgres_data:
+    name: moh-mncah-postgres-data
+  redis_data:
+    name: moh-mncah-redis-data
+  uploads_data:
+    name: moh-mncah-uploads
+  exports_data:
+    name: moh-mncah-exports
+  logs_data:
+    name: moh-mncah-logs
+  static_files:
+    name: moh-mncah-static
+  prometheus_data:
+    name: moh-mncah-prometheus
+  grafana_data:
+    name: moh-mncah-grafana
+
+# Environment-specific configurations
+x-development: &development
+  environment:
+    - FLASK_ENV=development
+    - FLASK_DEBUG=True
+    - LOG_TO_STDOUT=True
+
+x-production: &production
+  environment:
+    - FLASK_ENV=production
+    - FLASK_DEBUG=False
+    - SESSION_COOKIE_SECURE=True
+    - SESSION_COOKIE_HTTPONLY=True
+    - SESSION_COOKIE_SAMESITE=Lax
+
+# Health check template
+x-healthcheck: &default-healthcheck
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 40s

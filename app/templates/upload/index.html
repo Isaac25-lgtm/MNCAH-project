@@ -1,0 +1,490 @@
+{% extends "base.html" %}
+
+{% block title %}Data Upload - MOH MNCAH Dashboard{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+        <li class="breadcrumb-item active">Data Upload</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block page_header %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h1 class="h2 mb-0">
+                <i class="fas fa-upload text-primary me-2"></i>
+                Data Upload
+            </h1>
+            <p class="text-muted mb-0">Upload MNCAH indicator data for analysis and reporting</p>
+        </div>
+        <div class="col-auto">
+            <div class="btn-group" role="group">
+                <button class="btn btn-outline-info me-2" onclick="downloadTemplate()">
+                    <i class="fas fa-download me-1"></i> Download Template
+                </button>
+                <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Upload Instructions -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h6 class="mb-0 fw-bold">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Upload Instructions
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-8">
+                        <h6 class="text-primary">MNCAH Indicator Data Requirements:</h6>
+                        <ul class="mb-3">
+                            <li><strong>ANC Indicators (9):</strong> ANC 1, ANC 1st Trimester, ANC 4, ANC 8, IPT3, HB Testing, LLIN, Iron/Folic, Ultrasound</li>
+                            <li><strong>Intrapartum Indicators (9):</strong> Deliveries, LBW, KMC, Birth Asphyxia, Resuscitation, Stillbirths, Mortality Rates</li>
+                            <li><strong>PNC Indicators (4):</strong> Breastfeeding 1hr, PNC 24hrs, PNC 6 days, PNC 6 weeks</li>
+                        </ul>
+                        <div class="alert alert-info">
+                            <i class="fas fa-lightbulb me-2"></i>
+                            <strong>Note:</strong> Use the official HMIS 105 indicator codes when uploading data. Download the template for the correct format.
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card border-success">
+                            <div class="card-body text-center">
+                                <i class="fas fa-file-excel fa-3x text-success mb-2"></i>
+                                <h6>Supported Formats</h6>
+                                <p class="mb-2">Excel (.xlsx, .xls)<br>CSV (.csv)</p>
+                                <small class="text-muted">Maximum size: 15MB</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Upload Form -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="mb-0 fw-bold text-primary">Upload MNCAH Data</h6>
+            </div>
+            <div class="card-body">
+                <form id="uploadForm" enctype="multipart/form-data" action="{{ url_for('upload.process') }}" method="POST">
+                    {{ csrf_token() }}
+                    
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="facility_name" class="form-label">Health Facility Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="facility_name" name="facility_name" 
+                                       value="{{ request.form.facility_name if request.form.facility_name }}" required>
+                                <div class="form-text">Enter the full name of the health facility</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="district" class="form-label">District <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="district" name="district" 
+                                       value="{{ request.form.district if request.form.district }}" required>
+                                <div class="form-text">District where the facility is located</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="reporting_period" class="form-label">Reporting Period <span class="text-danger">*</span></label>
+                                <select class="form-select" id="reporting_period" name="reporting_period" required>
+                                    <option value="">Select reporting period...</option>
+                                    <option value="monthly" {{ 'selected' if request.form.reporting_period == 'monthly' }}>Monthly</option>
+                                    <option value="quarterly" {{ 'selected' if request.form.reporting_period == 'quarterly' }}>Quarterly</option>
+                                    <option value="annual" {{ 'selected' if request.form.reporting_period == 'annual' }}>Annual</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <div class="mb-3">
+                                <label for="population" class="form-label">Catchment Population <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="population" name="population" min="1" 
+                                       value="{{ request.form.population if request.form.population }}" required>
+                                <div class="form-text">Total population served by this facility (annual figure)</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="reporting_date" class="form-label">Reporting Date <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="reporting_date" name="reporting_date" 
+                                       value="{{ request.form.reporting_date if request.form.reporting_date }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="data_file" class="form-label">Data File <span class="text-danger">*</span></label>
+                                <input type="file" class="form-control" id="data_file" name="data_file" 
+                                       accept=".xlsx,.xls,.csv" required>
+                                <div class="form-text">Upload Excel or CSV file with MNCAH indicator data</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Population Adjustment Info -->
+                    <div class="alert alert-warning" id="populationAdjustment" style="display: none;">
+                        <i class="fas fa-calculator me-2"></i>
+                        <strong>Population Adjustment:</strong>
+                        <span id="adjustmentText"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                <i class="fas fa-upload me-2"></i>
+                                Upload Data
+                            </button>
+                            <button type="button" class="btn btn-secondary ms-2" onclick="resetForm()">
+                                <i class="fas fa-redo me-1"></i>
+                                Reset Form
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Uploads -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h6 class="mb-0 fw-bold text-primary">Recent Uploads</h6>
+                    <a href="{{ url_for('upload.validation') }}" class="btn btn-sm btn-outline-info">
+                        <i class="fas fa-eye me-1"></i>
+                        View All
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="uploadsTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Facility</th>
+                                <th>District</th>
+                                <th>Period</th>
+                                <th>Status</th>
+                                <th>Quality Score</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if recent_uploads %}
+                                {% for upload in recent_uploads %}
+                                {% set quality_summary = upload.get_validation_summary() %}
+                                <tr>
+                                    <td>{{ upload.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                    <td><strong>{{ upload.facility_name }}</strong></td>
+                                    <td>{{ upload.district or 'N/A' }}</td>
+                                    <td><span class="badge bg-secondary">{{ upload.reporting_period.title() }}</span></td>
+                                    <td>
+                                        {% if upload.status.value == 'completed' %}
+                                            <span class="badge bg-success">Completed</span>
+                                        {% elif upload.status.value == 'processing' %}
+                                            <span class="badge bg-warning">Processing</span>
+                                        {% elif upload.status.value == 'failed' %}
+                                            <span class="badge bg-danger">Failed</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">{{ upload.status.value.title() }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if quality_summary.get('validation_rate') is not none %}
+                                            {% set score = quality_summary.get('validation_rate', 0) %}
+                                            <span class="badge {% if score >= 90 %}bg-success{% elif score >= 70 %}bg-warning{% else %}bg-danger{% endif %}">
+                                                {{ "%.0f"|format(score) }}%
+                                            </span>
+                                        {% else %}
+                                            <span class="text-muted">N/A</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="{{ url_for('upload.view_upload', upload_id=upload.id) }}" 
+                                               class="btn btn-outline-primary" title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            {% if upload.status.value == 'completed' %}
+                                            <a href="{{ url_for('analysis.view_upload', upload_id=upload.id) }}" 
+                                               class="btn btn-outline-success" title="View Analysis">
+                                                <i class="fas fa-chart-line"></i>
+                                            </a>
+                                            {% endif %}
+                                            {% if current_user.user_type.value == 'admin' %}
+                                            <button class="btn btn-outline-danger delete-upload-btn" 
+                                                    data-upload-id="{{ upload.id }}" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                            {% endif %}
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-4">
+                                        <i class="fas fa-upload fa-3x mb-3 text-muted"></i>
+                                        <h5 class="text-muted">No uploads yet</h5>
+                                        <p class="mb-0">Upload your first MNCAH data file to get started.</p>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Upload Progress Modal -->
+<div class="modal fade" id="uploadModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-upload me-2"></i>
+                    Processing Upload
+                </h5>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h6 id="uploadStatusText">Uploading file...</h6>
+                    <p class="text-muted" id="uploadDetailText">Please wait while we process your data.</p>
+                    
+                    <div class="progress mt-3" style="height: 20px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" id="uploadProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize DataTable for uploads if data exists
+    const table = document.getElementById('uploadsTable');
+    if (table && table.querySelector('tbody tr td:not([colspan])')) {
+        $('#uploadsTable').DataTable({
+            "order": [[0, "desc"]],
+            "pageLength": 10,
+            "responsive": true,
+            "language": {
+                "search": "Search uploads:",
+                "lengthMenu": "Show _MENU_ uploads",
+                "info": "Showing _START_ to _END_ of _TOTAL_ uploads"
+            }
+        });
+    }
+
+    // Handle delete upload button clicks
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('.delete-upload-btn')) {
+            const button = e.target.closest('.delete-upload-btn');
+            const uploadId = button.getAttribute('data-upload-id');
+            deleteUpload(uploadId);
+        }
+    });
+
+    // Handle reporting period change
+    document.getElementById('reporting_period').addEventListener('change', updatePopulationAdjustment);
+    document.getElementById('population').addEventListener('input', updatePopulationAdjustment);
+
+    // Handle form submission with progress tracking
+    document.getElementById('uploadForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Validate form
+        if (!this.checkValidity()) {
+            this.reportValidity();
+            return;
+        }
+        
+        // Show upload modal
+        const uploadModal = new bootstrap.Modal(document.getElementById('uploadModal'));
+        uploadModal.show();
+        
+        // Create FormData
+        const formData = new FormData(this);
+        
+        // Upload progress simulation
+        let progress = 0;
+        const progressBar = document.getElementById('uploadProgress');
+        const statusText = document.getElementById('uploadStatusText');
+        const detailText = document.getElementById('uploadDetailText');
+        
+        const progressInterval = setInterval(() => {
+            progress += Math.random() * 15 + 5;
+            if (progress > 90) progress = 90;
+            
+            progressBar.style.width = progress + '%';
+            
+            if (progress < 30) {
+                statusText.textContent = 'Uploading file...';
+                detailText.textContent = 'Transferring data to server';
+            } else if (progress < 60) {
+                statusText.textContent = 'Processing data...';
+                detailText.textContent = 'Extracting MNCAH indicators';
+            } else {
+                statusText.textContent = 'Calculating indicators...';
+                detailText.textContent = 'Running validation checks';
+            }
+        }, 800);
+        
+        // Submit form via AJAX
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': MOH.csrfToken
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            clearInterval(progressInterval);
+            progressBar.style.width = '100%';
+            statusText.textContent = 'Upload completed!';
+            detailText.textContent = 'Data processed successfully';
+            
+            setTimeout(() => {
+                uploadModal.hide();
+                if (data.success) {
+                    MOH.showMessage(data.message || 'Upload completed successfully!', 'success');
+                    setTimeout(() => {
+                        window.location.href = data.redirect_url || window.location.href;
+                    }, 1500);
+                } else {
+                    MOH.showMessage(data.message || 'Upload failed', 'error');
+                }
+            }, 2000);
+        })
+        .catch(error => {
+            clearInterval(progressInterval);
+            uploadModal.hide();
+            console.error('Upload error:', error);
+            MOH.showMessage('Upload failed. Please try again.', 'error');
+        });
+    });
+    
+    // Initial population adjustment check
+    updatePopulationAdjustment();
+});
+
+function updatePopulationAdjustment() {
+    const period = document.getElementById('reporting_period').value;
+    const population = document.getElementById('population').value;
+    const adjustmentDiv = document.getElementById('populationAdjustment');
+    const adjustmentText = document.getElementById('adjustmentText');
+    
+    if (period && population) {
+        let adjustment = '';
+        let adjustedPop = parseInt(population);
+        
+        if (period === 'quarterly') {
+            adjustedPop = Math.round(adjustedPop / 4);
+            adjustment = `Quarterly reporting: Population adjusted to ${adjustedPop.toLocaleString()} (annual ÷ 4)`;
+        } else if (period === 'monthly') {
+            adjustedPop = Math.round(adjustedPop / 12);
+            adjustment = `Monthly reporting: Population adjusted to ${adjustedPop.toLocaleString()} (annual ÷ 12)`;
+        } else {
+            adjustment = `Annual reporting: Using full population of ${adjustedPop.toLocaleString()}`;
+        }
+        
+        // Calculate expected values based on WHO/Uganda standards
+        const expectedPregnancies = Math.round(adjustedPop * 0.048); // ~4.8% pregnancy rate
+        const expectedDeliveries = Math.round(adjustedPop * 0.046);  // ~4.6% delivery rate
+        
+        adjustment += `<br><strong>Expected:</strong> ${expectedPregnancies.toLocaleString()} pregnancies, ${expectedDeliveries.toLocaleString()} deliveries`;
+        
+        adjustmentText.innerHTML = adjustment;
+        adjustmentDiv.style.display = 'block';
+    } else {
+        adjustmentDiv.style.display = 'none';
+    }
+}
+
+function downloadTemplate() {
+    // Create a link to download the template
+    const link = document.createElement('a');
+    link.href = '{{ url_for("upload.download_template") }}';
+    link.download = 'MNCAH_Data_Template.xlsx';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    MOH.showMessage('Template download started!', 'info');
+}
+
+function resetForm() {
+    document.getElementById('uploadForm').reset();
+    document.getElementById('populationAdjustment').style.display = 'none';
+    MOH.showMessage('Form has been reset', 'info');
+}
+
+function deleteUpload(uploadId) {
+    if (confirm('Are you sure you want to delete this upload? This action cannot be undone.')) {
+        fetch(`/upload/${uploadId}/delete`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': MOH.csrfToken
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                MOH.showMessage('Upload deleted successfully', 'success');
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                MOH.showMessage(data.message || 'Delete failed', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Delete error:', error);
+            MOH.showMessage('Failed to delete upload', 'error');
+        });
+    }
+}
+</script>
+{% endblock %}

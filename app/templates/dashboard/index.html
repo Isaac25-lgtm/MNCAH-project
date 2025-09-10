@@ -1,0 +1,649 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - MOH MNCAH Analytics{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active">Dashboard</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block page_header %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h1 class="h2 mb-0">
+                <i class="fas fa-tachometer-alt text-primary me-2"></i>
+                MNCAH Dashboard
+            </h1>
+            <p class="text-muted mb-0">Maternal, Neonatal, Child and Adolescent Health Analytics</p>
+        </div>
+        <div class="col-auto">
+            <div class="btn-group" role="group">
+                {% if current_user.can_upload_data() %}
+                <a href="{{ url_for('upload.index') }}" class="btn btn-primary">
+                    <i class="fas fa-upload me-1"></i>
+                    Upload Data
+                </a>
+                {% endif %}
+                <a href="{{ url_for('reports.index') }}" class="btn btn-outline-primary">
+                    <i class="fas fa-file-alt me-1"></i>
+                    Generate Report
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+{% if error %}
+<div class="alert alert-danger">
+    <i class="fas fa-exclamation-triangle me-2"></i>
+    {{ error }}
+</div>
+{% endif %}
+
+<!-- Summary Statistics Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h3 class="text-primary mb-1" id="totalRecords">{{ stats.get('total_uploads', 0) }}</h3>
+                        <p class="card-title mb-0">Total Data Uploads</p>
+                        <small class="text-muted">
+                            {{ stats.get('recent_uploads', 0) }} in last 30 days
+                        </small>
+                    </div>
+                    <div class="ms-3">
+                        <i class="fas fa-database fa-2x text-primary opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h3 class="text-success mb-1" id="totalFacilities">{{ stats.get('total_facilities', 0) }}</h3>
+                        <p class="card-title mb-0">Health Facilities</p>
+                        <small class="text-muted">
+                            Across {{ stats.get('districts', 0) }} districts
+                        </small>
+                    </div>
+                    <div class="ms-3">
+                        <i class="fas fa-hospital fa-2x text-success opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h3 class="text-info mb-1" id="successRate">{{ "%.1f"|format(stats.get('success_rate', 0)) }}%</h3>
+                        <p class="card-title mb-0">Success Rate</p>
+                        <small class="text-muted">
+                            {{ stats.get('completed_uploads', 0) }} completed uploads
+                        </small>
+                    </div>
+                    <div class="ms-3">
+                        <i class="fas fa-check-circle fa-2x text-info opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="card stats-card">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <h3 class="text-warning mb-1" id="validationRate">{{ "%.1f"|format(validation_summary.get('validation_rate', 0)) }}%</h3>
+                        <p class="card-title mb-0">Data Quality</p>
+                        <small class="text-muted">
+                            {{ validation_summary.get('valid_indicators', 0) }} valid indicators
+                        </small>
+                    </div>
+                    <div class="ms-3">
+                        <i class="fas fa-shield-alt fa-2x text-warning opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions - MNCAH Categories -->
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card indicator-card h-100" data-href="{{ url_for('analysis.anc_analysis') }}">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-baby fa-4x text-primary"></i>
+                </div>
+                <h5 class="card-title">Antenatal Care (ANC)</h5>
+                <p class="text-muted mb-3">9 Key Indicators</p>
+                <ul class="list-unstyled text-start small">
+                    <li><i class="fas fa-check text-success me-1"></i> ANC Coverage (1st, 4th, 8th visits)</li>
+                    <li><i class="fas fa-check text-success me-1"></i> IPT3 and Iron/Folic supplementation</li>
+                    <li><i class="fas fa-check text-success me-1"></i> Hb testing and LLIN distribution</li>
+                    <li><i class="fas fa-check text-success me-1"></i> Ultrasound coverage</li>
+                </ul>
+                <button class="btn btn-outline-primary mt-2">
+                    <i class="fas fa-chart-line me-1"></i>
+                    View ANC Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card indicator-card h-100" data-href="{{ url_for('analysis.intrapartum_analysis') }}">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-heartbeat fa-4x text-success"></i>
+                </div>
+                <h5 class="card-title">Intrapartum Care</h5>
+                <p class="text-muted mb-3">9 Key Indicators</p>
+                <ul class="list-unstyled text-start small">
+                    <li><i class="fas fa-check text-success me-1"></i> Institutional deliveries</li>
+                    <li><i class="fas fa-check text-success me-1"></i> Low birth weight and KMC</li>
+                    <li><i class="fas fa-check text-success me-1"></i> Birth asphyxia and resuscitation</li>
+                    <li><i class="fas fa-check text-success me-1"></i> Mortality rates (neonatal, perinatal, maternal)</li>
+                </ul>
+                <button class="btn btn-outline-success mt-2">
+                    <i class="fas fa-chart-line me-1"></i>
+                    View Intrapartum Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card indicator-card h-100" data-href="{{ url_for('analysis.pnc_analysis') }}">
+            <div class="card-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-hand-holding-heart fa-4x text-warning"></i>
+                </div>
+                <h5 class="card-title">Postnatal Care (PNC)</h5>
+                <p class="text-muted mb-3">4 Key Indicators</p>
+                <ul class="list-unstyled text-start small">
+                    <li><i class="fas fa-check text-success me-1"></i> Breastfeeding within 1 hour</li>
+                    <li><i class="fas fa-check text-success me-1"></i> PNC at 24 hours</li>
+                    <li><i class="fas fa-check text-success me-1"></i> PNC at 6 days</li>
+                    <li><i class="fas fa-check text-success me-1"></i> PNC at 6 weeks</li>
+                </ul>
+                <button class="btn btn-outline-warning mt-2">
+                    <i class="fas fa-chart-line me-1"></i>
+                    View PNC Analysis
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Data Quality Overview -->
+{% if validation_summary.get('total_indicators', 0) > 0 %}
+<div class="row mb-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-shield-alt me-2"></i>
+                    Data Quality Overview
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas id="qualityChart" width="300" height="200"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="quality-metrics">
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>
+                                    <i class="fas fa-circle text-success me-1"></i>
+                                    Valid Indicators
+                                </span>
+                                <span class="fw-bold">{{ validation_summary.get('valid_indicators', 0) }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>
+                                    <i class="fas fa-circle text-warning me-1"></i>
+                                    Warning Indicators
+                                </span>
+                                <span class="fw-bold">{{ validation_summary.get('warning_indicators', 0) }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>
+                                    <i class="fas fa-circle text-danger me-1"></i>
+                                    Error Indicators
+                                </span>
+                                <span class="fw-bold">{{ validation_summary.get('error_indicators', 0) }}</span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between">
+                                <span><strong>Total Analyzed</strong></span>
+                                <span class="fw-bold">{{ validation_summary.get('total_indicators', 0) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-trophy me-2"></i>
+                    Performance Summary
+                </h5>
+            </div>
+            <div class="card-body">
+                {% set perf_rate = validation_summary.get('validation_rate', 0) %}
+                {% if perf_rate >= 90 %}
+                    {% set perf_class = 'success' %}
+                    {% set perf_text = 'Excellent' %}
+                    {% set perf_icon = 'fas fa-star' %}
+                {% elif perf_rate >= 75 %}
+                    {% set perf_class = 'info' %}
+                    {% set perf_text = 'Good' %}
+                    {% set perf_icon = 'fas fa-thumbs-up' %}
+                {% elif perf_rate >= 60 %}
+                    {% set perf_class = 'warning' %}
+                    {% set perf_text = 'Acceptable' %}
+                    {% set perf_icon = 'fas fa-exclamation-triangle' %}
+                {% else %}
+                    {% set perf_class = 'danger' %}
+                    {% set perf_text = 'Needs Improvement' %}
+                    {% set perf_icon = 'fas fa-exclamation-circle' %}
+                {% endif %}
+                
+                <div class="text-center">
+                    <div class="mb-3">
+                        <i class="{{ perf_icon }} fa-3x text-{{ perf_class }}"></i>
+                    </div>
+                    <h4 class="text-{{ perf_class }}">{{ perf_text }}</h4>
+                    <h2 class="text-{{ perf_class }}">{{ "%.1f"|format(perf_rate) }}%</h2>
+                    <p class="text-muted">Overall Data Quality</p>
+                </div>
+                
+                <div class="mt-3">
+                    <a href="{{ url_for('reports.data_quality_report') }}" class="btn btn-outline-{{ perf_class }} w-100">
+                        <i class="fas fa-file-alt me-1"></i>
+                        View Quality Report
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Recent Activity -->
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">
+                        <i class="fas fa-history me-2"></i>
+                        Recent Data Uploads
+                    </h5>
+                    {% if current_user.can_upload_data() %}
+                    <a href="{{ url_for('upload.index') }}" class="btn btn-sm btn-outline-primary">
+                        <i class="fas fa-plus me-1"></i>
+                        New Upload
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="card-body">
+                {% if recent_uploads %}
+                <div class="table-responsive">
+                    <table class="table table-hover" id="recentUploadsTable">
+                        <thead>
+                            <tr>
+                                <th>Facility</th>
+                                <th>District</th>
+                                <th>Period</th>
+                                <th>Quality</th>
+                                <th>Upload Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for upload in recent_uploads %}
+                            {% set quality_summary = upload.get_validation_summary() %}
+                            <tr>
+                                <td>
+                                    <strong>{{ upload.facility_name }}</strong>
+                                </td>
+                                <td>{{ upload.district or 'N/A' }}</td>
+                                <td>
+                                    <span class="badge bg-secondary">{{ upload.reporting_period }}</span>
+                                </td>
+                                <td>
+                                    {% set quality_rate = quality_summary.get('validation_rate', 0) %}
+                                    {% if quality_rate >= 85 %}
+                                        <span class="badge bg-success">{{ "%.0f"|format(quality_rate) }}%</span>
+                                    {% elif quality_rate >= 70 %}
+                                        <span class="badge bg-warning">{{ "%.0f"|format(quality_rate) }}%</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">{{ "%.0f"|format(quality_rate) }}%</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <small class="text-muted">{{ upload.uploaded_at.strftime('%b %d, %Y') }}</small>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ url_for('analysis.view_upload', upload_id=upload.id) }}" 
+                                           class="btn btn-outline-info" title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        {% if upload.status.value == 'completed' %}
+                                        <button class="btn btn-outline-success" 
+                                                data-facility="{{ upload.facility_name }}" 
+                                                data-upload-id="{{ upload.id }}"
+                                                onclick="viewIndicatorDetails(this.dataset.facility, this.dataset.uploadId)"
+                                                title="View Indicators">
+                                            <i class="fas fa-chart-bar"></i>
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No data uploads yet</h5>
+                    <p class="text-muted">Start by uploading your first MNCAH dataset</p>
+                    {% if current_user.can_upload_data() %}
+                    <a href="{{ url_for('upload.index') }}" class="btn btn-primary">
+                        <i class="fas fa-upload me-1"></i>
+                        Upload First Dataset
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-map-marker-alt me-2"></i>
+                    Top Performing Facilities
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if facilities_summary.get('facilities') %}
+                <div class="facilities-list">
+                    {% for facility in facilities_summary.get('facilities', [])[:5] %}
+                    <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                        <div class="flex-grow-1">
+                            <strong class="d-block">{{ facility.name }}</strong>
+                            <small class="text-muted">{{ facility.district or 'N/A' }}</small>
+                        </div>
+                        <div class="text-end">
+                            {% if facility.validation_rate >= 85 %}
+                                <span class="badge bg-success">{{ "%.0f"|format(facility.validation_rate) }}%</span>
+                            {% elif facility.validation_rate >= 70 %}
+                                <span class="badge bg-warning">{{ "%.0f"|format(facility.validation_rate) }}%</span>
+                            {% else %}
+                                <span class="badge bg-danger">{{ "%.0f"|format(facility.validation_rate) }}%</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                
+                <div class="mt-3">
+                    <a href="{{ url_for('analysis.facility_comparison') }}" class="btn btn-outline-primary w-100">
+                        <i class="fas fa-balance-scale me-1"></i>
+                        Compare All Facilities
+                    </a>
+                </div>
+                {% else %}
+                <div class="text-center py-3">
+                    <i class="fas fa-hospital fa-2x text-muted mb-2"></i>
+                    <p class="text-muted mb-0">No facility data available</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize data quality chart
+    initializeQualityChart();
+    
+    // Initialize recent uploads table
+    if (document.getElementById('recentUploadsTable')) {
+        $('#recentUploadsTable').DataTable({
+            pageLength: 5,
+            lengthChange: false,
+            searching: false,
+            info: false,
+            order: [[4, 'desc']] // Sort by upload date
+        });
+    }
+    
+// Auto-refresh dashboard data every 5 minutes
+setInterval(refreshDashboardStats, 5 * 60 * 1000);
+});
+</script>
+
+<!-- Validation Summary Data for Charts -->
+<script type="application/json" id="validation-data">
+{
+    "valid_indicators": {{ validation_summary.get('valid_indicators', 0) }},
+    "warning_indicators": {{ validation_summary.get('warning_indicators', 0) }},
+    "error_indicators": {{ validation_summary.get('error_indicators', 0) }}
+}
+</script>
+
+<script>
+function initializeQualityChart() {
+    const ctx = document.getElementById('qualityChart');
+    if (!ctx) return;
+    
+    const validationData = JSON.parse(document.getElementById('validation-data').textContent);
+    const validIndicators = validationData.valid_indicators;
+    const warningIndicators = validationData.warning_indicators;
+    const errorIndicators = validationData.error_indicators;
+    
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Valid', 'Warning', 'Error'],
+            datasets: [{
+                data: [validIndicators, warningIndicators, errorIndicators],
+                backgroundColor: ['#28a745', '#ffc107', '#dc3545'],
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = total > 0 ? ((context.raw / total) * 100).toFixed(1) : 0;
+                            return context.label + ': ' + context.raw + ' (' + percentage + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function viewIndicatorDetails(facilityName, uploadId) {
+    // Show modal with indicator details
+    MOH.showLoading('Loading indicator details...');
+    
+    fetch(`/api/uploads/${uploadId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showIndicatorModal(facilityName, data.data);
+            } else {
+                MOH.showMessage('Error loading indicator details', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            MOH.showMessage('Error loading indicator details', 'error');
+        })
+        .finally(() => {
+            MOH.hideLoading();
+        });
+}
+
+function showIndicatorModal(facilityName, uploadData) {
+    // Create modal content
+    let modalContent = `
+        <div class="modal fade" id="indicatorModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">${facilityName} - Indicator Summary</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+    `;
+    
+    // Add category summaries
+    const categories = ['anc', 'intrapartum', 'pnc'];
+    const categoryNames = {
+        'anc': 'Antenatal Care',
+        'intrapartum': 'Intrapartum Care',
+        'pnc': 'Postnatal Care'
+    };
+    
+    categories.forEach(category => {
+        if (uploadData.processed_data && uploadData.processed_data[category]) {
+            const categoryData = uploadData.processed_data[category];
+            const indicators = categoryData.indicators || {};
+            const validations = categoryData.validations || {};
+            
+            modalContent += `
+                <div class="col-md-4">
+                    <h6 class="text-primary">${categoryNames[category]}</h6>
+                    <div class="list-group list-group-flush">
+            `;
+            
+            Object.keys(indicators).slice(0, 5).forEach(indicator => {
+                const value = indicators[indicator];
+                const status = validations[indicator] || 'unknown';
+                const statusClass = status === 'green' ? 'success' : 
+                                  status === 'yellow' ? 'warning' : 
+                                  status === 'red' ? 'danger' : 'info';
+                
+                modalContent += `
+                    <div class="list-group-item d-flex justify-content-between">
+                        <span class="small">${indicator.replace(/_/g, ' ')}</span>
+                        <span class="badge bg-${statusClass}">${MOH.formatNumber(value)}</span>
+                    </div>
+                `;
+            });
+            
+            modalContent += `
+                    </div>
+                </div>
+            `;
+        }
+    });
+    
+    modalContent += `
+                        </div>
+                        <div class="mt-3 text-center">
+                            <a href="/analysis/upload/${uploadData.id}" class="btn btn-primary">
+                                View Full Analysis
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Add modal to page and show
+    document.body.insertAdjacentHTML('beforeend', modalContent);
+    const modal = new bootstrap.Modal(document.getElementById('indicatorModal'));
+    modal.show();
+    
+    // Clean up modal when hidden
+    document.getElementById('indicatorModal').addEventListener('hidden.bs.modal', function() {
+        this.remove();
+    });
+}
+
+function refreshDashboardStats() {
+    fetch('/api/dashboard/stats')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Update stats
+                document.getElementById('totalRecords').textContent = data.data.overview.total_uploads;
+                document.getElementById('totalFacilities').textContent = data.data.overview.total_facilities;
+                document.getElementById('successRate').textContent = 
+                    (data.data.overview.completed_uploads / data.data.overview.total_uploads * 100).toFixed(1) + '%';
+                
+                // Update validation rate if available
+                if (data.data.data_quality && data.data.data_quality.overall_quality_rate !== undefined) {
+                    document.getElementById('validationRate').textContent = 
+                        data.data.data_quality.overall_quality_rate.toFixed(1) + '%';
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error refreshing dashboard stats:', error);
+        });
+}
+
+// Handle card navigation clicks
+document.addEventListener('DOMContentLoaded', function() {
+    // Add click handlers for indicator cards
+    document.querySelectorAll('.indicator-card[data-href]').forEach(card => {
+        card.style.cursor = 'pointer';
+        card.addEventListener('click', function() {
+            window.location.href = this.dataset.href;
+        });
+    });
+});
+</script>
+{% endblock %}

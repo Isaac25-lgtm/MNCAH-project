@@ -1,0 +1,651 @@
+{% extends "base.html" %}
+
+{% block title %}Postnatal Care (PNC) Analysis - MOH MNCAH Dashboard{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 text-primary mb-0">
+                        <i class="fas fa-heart me-2"></i>
+                        Postnatal Care (PNC) Analysis
+                    </h1>
+                    <p class="text-muted mt-1">Analysis of postnatal care coverage and early breastfeeding practices</p>
+                </div>
+                <div>
+                    <button class="btn btn-outline-primary me-2" onclick="exportData('pdf')">
+                        <i class="fas fa-file-pdf me-1"></i> Export PDF
+                    </button>
+                    <button class="btn btn-outline-success" onclick="exportData('excel')">
+                        <i class="fas fa-file-excel me-1"></i> Export Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Key Metrics Cards -->
+    <div class="row mb-4">
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-left-success h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Breastfeeding @ 1 Hour
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ "%.1f"|format(indicators.breastfeeding_1hour) }}%
+                            </div>
+                            <small class="text-muted">Target: 100%</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-baby fa-2x 
+                               {% if indicators.breastfeeding_1hour >= 100 %}text-success
+                               {% elif indicators.breastfeeding_1hour >= 90 %}text-warning
+                               {% else %}text-danger{% endif %}"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-left-primary h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                PNC @ 24 Hours
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ "%.1f"|format(indicators.pnc_24hours) }}%
+                            </div>
+                            <small class="text-muted">Target: 100%</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clock fa-2x 
+                               {% if indicators.pnc_24hours >= 100 %}text-success
+                               {% elif indicators.pnc_24hours >= 90 %}text-warning
+                               {% else %}text-danger{% endif %}"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-left-info h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                PNC @ 6 Days
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ "%.1f"|format(indicators.pnc_6days) }}%
+                            </div>
+                            <small class="text-muted">Target: ≥75%</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar-check fa-2x 
+                               {% if indicators.pnc_6days >= 75 %}text-success
+                               {% elif indicators.pnc_6days >= 60 %}text-warning
+                               {% else %}text-danger{% endif %}"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-3">
+            <div class="card border-left-warning h-100">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                PNC @ 6 Weeks
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {{ "%.1f"|format(indicators.pnc_6weeks) }}%
+                            </div>
+                            <small class="text-muted">Target: ≥75%</small>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-heart fa-2x 
+                               {% if indicators.pnc_6weeks >= 75 %}text-success
+                               {% elif indicators.pnc_6weeks >= 60 %}text-warning
+                               {% else %}text-danger{% endif %}"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PNC Continuum Analysis -->
+    <div class="row mb-4">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-route me-2"></i>
+                        PNC Continuum of Care
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="timeline-container">
+                        <div class="timeline-step {% if indicators.breastfeeding_1hour >= 100 %}timeline-success{% elif indicators.breastfeeding_1hour >= 90 %}timeline-warning{% else %}timeline-danger{% endif %}">
+                            <div class="timeline-badge">
+                                <i class="fas fa-baby"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>Within 1 Hour</h6>
+                                <p class="mb-1"><strong>{{ "%.1f"|format(indicators.breastfeeding_1hour) }}%</strong> early breastfeeding initiation</p>
+                                <small class="text-muted">Critical for bonding and immunity</small>
+                            </div>
+                        </div>
+
+                        <div class="timeline-step {% if indicators.pnc_24hours >= 100 %}timeline-success{% elif indicators.pnc_24hours >= 90 %}timeline-warning{% else %}timeline-danger{% endif %}">
+                            <div class="timeline-badge">
+                                <i class="fas fa-stethoscope"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>24 Hours</h6>
+                                <p class="mb-1"><strong>{{ "%.1f"|format(indicators.pnc_24hours) }}%</strong> first PNC check</p>
+                                <small class="text-muted">Immediate postpartum complications</small>
+                            </div>
+                        </div>
+
+                        <div class="timeline-step {% if indicators.pnc_6days >= 75 %}timeline-success{% elif indicators.pnc_6days >= 60 %}timeline-warning{% else %}timeline-danger{% endif %}">
+                            <div class="timeline-badge">
+                                <i class="fas fa-calendar-check"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>6 Days</h6>
+                                <p class="mb-1"><strong>{{ "%.1f"|format(indicators.pnc_6days) }}%</strong> follow-up visit</p>
+                                <small class="text-muted">Early detection of complications</small>
+                            </div>
+                        </div>
+
+                        <div class="timeline-step {% if indicators.pnc_6weeks >= 75 %}timeline-success{% elif indicators.pnc_6weeks >= 60 %}timeline-warning{% else %}timeline-danger{% endif %}">
+                            <div class="timeline-badge">
+                                <i class="fas fa-heart"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6>6 Weeks</h6>
+                                <p class="mb-1"><strong>{{ "%.1f"|format(indicators.pnc_6weeks) }}%</strong> final PNC visit</p>
+                                <small class="text-muted">Recovery assessment and family planning</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow h-100">
+                <div class="card-header bg-success text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-chart-pie me-2"></i>
+                        Retention Analysis
+                    </h6>
+                </div>
+                <div class="card-body">
+                    {% set retention_24h_6d = (indicators.pnc_6days / indicators.pnc_24hours * 100) if indicators.pnc_24hours > 0 else 0 %}
+                    {% set retention_6d_6w = (indicators.pnc_6weeks / indicators.pnc_6days * 100) if indicators.pnc_6days > 0 else 0 %}
+                    {% set continuum_completion = (indicators.pnc_6weeks / indicators.breastfeeding_1hour * 100) if indicators.breastfeeding_1hour > 0 else 0 %}
+                    {% set retention_24h_6d_class = 'success' if retention_24h_6d >= 85 else 'warning' if retention_24h_6d >= 70 else 'danger' %}
+                    {% set retention_6d_6w_class = 'success' if retention_6d_6w >= 85 else 'warning' if retention_6d_6w >= 70 else 'danger' %}
+                    {% set continuum_completion_class = 'success' if continuum_completion >= 75 else 'warning' if continuum_completion >= 60 else 'danger' %}
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted">24hrs → 6 days retention</small>
+                            <strong class="text-{{ retention_24h_6d_class }}">
+                                {{ "%.1f"|format(retention_24h_6d) }}%
+                            </strong>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-{{ retention_24h_6d_class }}" 
+                                 data-width="{{ retention_24h_6d }}" id="retention-24h-6d-bar"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted">6 days → 6 weeks retention</small>
+                            <strong class="text-{{ retention_6d_6w_class }}">
+                                {{ "%.1f"|format(retention_6d_6w) }}%
+                            </strong>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-{{ retention_6d_6w_class }}" 
+                                 data-width="{{ retention_6d_6w }}" id="retention-6d-6w-bar"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <small class="text-muted">Overall continuum completion</small>
+                            <strong class="text-{{ continuum_completion_class }}">
+                                {{ "%.1f"|format(continuum_completion) }}%
+                            </strong>
+                        </div>
+                        <div class="progress" style="height: 8px;">
+                            <div class="progress-bar bg-{{ continuum_completion_class }}" 
+                                 data-width="{{ continuum_completion }}" id="continuum-completion-bar"></div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-{{ continuum_completion_class }} alert-sm">
+                        {% if continuum_completion >= 75 %}
+                            <i class="fas fa-check-circle me-1"></i> Excellent continuity of care
+                        {% elif continuum_completion >= 60 %}
+                            <i class="fas fa-exclamation-triangle me-1"></i> Good retention, room for improvement
+                        {% else %}
+                            <i class="fas fa-times-circle me-1"></i> High dropout rate - intervention needed
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PNC Coverage Chart -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-chart-bar me-2"></i>
+                        PNC Coverage Over Time
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <canvas id="pncChart" height="300"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detailed Indicators Table -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">PNC Indicators Summary</h6>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" id="pncTable">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Indicator</th>
+                                    <th>Value</th>
+                                    <th>Target</th>
+                                    <th>Status</th>
+                                    <th>Clinical Importance</th>
+                                    <th>Recommended Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="{% if indicators.breastfeeding_1hour >= 100 %}table-success{% elif indicators.breastfeeding_1hour >= 90 %}table-warning{% else %}table-danger{% endif %}">
+                                    <td>
+                                        <strong>Breastfeeding within 1 Hour</strong>
+                                        <br><small class="text-muted">Early initiation of breastfeeding</small>
+                                    </td>
+                                    <td>{{ "%.1f"|format(indicators.breastfeeding_1hour) }}%</td>
+                                    <td>100%</td>
+                                    <td>
+                                        <span class="badge {% if indicators.breastfeeding_1hour >= 100 %}bg-success{% elif indicators.breastfeeding_1hour >= 90 %}bg-warning{% else %}bg-danger{% endif %}">
+                                            {% if indicators.breastfeeding_1hour >= 100 %}Achieved
+                                            {% elif indicators.breastfeeding_1hour >= 90 %}Near Target
+                                            {% else %}Below Target{% endif %}
+                                        </span>
+                                    </td>
+                                    <td>Establishes bonding, provides colostrum, reduces bleeding risk</td>
+                                    <td>
+                                        {% if indicators.breastfeeding_1hour < 90 %}
+                                            <span class="text-danger">Train staff on immediate post-delivery protocols</span>
+                                        {% elif indicators.breastfeeding_1hour < 100 %}
+                                            <span class="text-warning">Strengthen skin-to-skin contact practices</span>
+                                        {% else %}
+                                            <span class="text-success">Excellent early breastfeeding practices</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+
+                                <tr class="{% if indicators.pnc_24hours >= 100 %}table-success{% elif indicators.pnc_24hours >= 90 %}table-warning{% else %}table-danger{% endif %}">
+                                    <td>
+                                        <strong>PNC at 24 Hours</strong>
+                                        <br><small class="text-muted">First postnatal check within 24 hours</small>
+                                    </td>
+                                    <td>{{ "%.1f"|format(indicators.pnc_24hours) }}%</td>
+                                    <td>100%</td>
+                                    <td>
+                                        <span class="badge {% if indicators.pnc_24hours >= 100 %}bg-success{% elif indicators.pnc_24hours >= 90 %}bg-warning{% else %}bg-danger{% endif %}">
+                                            {% if indicators.pnc_24hours >= 100 %}Achieved
+                                            {% elif indicators.pnc_24hours >= 90 %}Near Target
+                                            {% else %}Below Target{% endif %}
+                                        </span>
+                                    </td>
+                                    <td>Critical window for detecting hemorrhage, infection, hypertension</td>
+                                    <td>
+                                        {% if indicators.pnc_24hours < 90 %}
+                                            <span class="text-danger">Improve discharge protocols and follow-up systems</span>
+                                        {% elif indicators.pnc_24hours < 100 %}
+                                            <span class="text-warning">Strengthen immediate postpartum monitoring</span>
+                                        {% else %}
+                                            <span class="text-success">Universal immediate PNC coverage</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+
+                                <tr class="{% if indicators.pnc_6days >= 75 %}table-success{% elif indicators.pnc_6days >= 60 %}table-warning{% else %}table-danger{% endif %}">
+                                    <td>
+                                        <strong>PNC at 6 Days</strong>
+                                        <br><small class="text-muted">Follow-up visit within first week</small>
+                                    </td>
+                                    <td>{{ "%.1f"|format(indicators.pnc_6days) }}%</td>
+                                    <td>≥75%</td>
+                                    <td>
+                                        <span class="badge {% if indicators.pnc_6days >= 75 %}bg-success{% elif indicators.pnc_6days >= 60 %}bg-warning{% else %}bg-danger{% endif %}">
+                                            {% if indicators.pnc_6days >= 75 %}Achieved
+                                            {% elif indicators.pnc_6days >= 60 %}Near Target
+                                            {% else %}Below Target{% endif %}
+                                        </span>
+                                    </td>
+                                    <td>Detects late-onset complications, supports breastfeeding</td>
+                                    <td>
+                                        {% if indicators.pnc_6days < 60 %}
+                                            <span class="text-danger">Establish community follow-up programs</span>
+                                        {% elif indicators.pnc_6days < 75 %}
+                                            <span class="text-warning">Improve appointment scheduling systems</span>
+                                        {% else %}
+                                            <span class="text-success">Good early follow-up coverage</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+
+                                <tr class="{% if indicators.pnc_6weeks >= 75 %}table-success{% elif indicators.pnc_6weeks >= 60 %}table-warning{% else %}table-danger{% endif %}">
+                                    <td>
+                                        <strong>PNC at 6 Weeks</strong>
+                                        <br><small class="text-muted">Final postnatal assessment</small>
+                                    </td>
+                                    <td>{{ "%.1f"|format(indicators.pnc_6weeks) }}%</td>
+                                    <td>≥75%</td>
+                                    <td>
+                                        <span class="badge {% if indicators.pnc_6weeks >= 75 %}bg-success{% elif indicators.pnc_6weeks >= 60 %}bg-warning{% else %}bg-danger{% endif %}">
+                                            {% if indicators.pnc_6weeks >= 75 %}Achieved
+                                            {% elif indicators.pnc_6weeks >= 60 %}Near Target
+                                            {% else %}Below Target{% endif %}
+                                        </span>
+                                    </td>
+                                    <td>Recovery assessment, family planning counseling, immunizations</td>
+                                    <td>
+                                        {% if indicators.pnc_6weeks < 60 %}
+                                            <span class="text-danger">Integrate with family planning services</span>
+                                        {% elif indicators.pnc_6weeks < 75 %}
+                                            <span class="text-warning">Strengthen long-term follow-up systems</span>
+                                        {% else %}
+                                            <span class="text-success">Complete PNC continuum achieved</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Data Quality Issues -->
+    {% if validation_errors %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card border-left-danger shadow">
+                <div class="card-header bg-danger text-white">
+                    <h6 class="m-0 font-weight-bold">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Data Quality Issues
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <h6>The following validation errors were detected:</h6>
+                        <ul class="mb-0">
+                            {% for error in validation_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                        <small class="text-muted">
+                            <strong>Note:</strong> These values are still displayed but marked for review.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Action Buttons -->
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between">
+                <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+                </a>
+                <div>
+                    <button class="btn btn-primary" onclick="viewTrends()">
+                        <i class="fas fa-chart-line me-1"></i> View Historical Trends
+                    </button>
+                    <button class="btn btn-info" onclick="generateReport()">
+                        <i class="fas fa-file-alt me-1"></i> Generate Report
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom CSS for Timeline -->
+<style>
+.timeline-container {
+    position: relative;
+    padding: 20px 0;
+}
+
+.timeline-step {
+    display: flex;
+    align-items: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.timeline-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 40px;
+    width: 2px;
+    height: 30px;
+    background-color: #dee2e6;
+}
+
+.timeline-success::after {
+    background-color: #28a745;
+}
+
+.timeline-warning::after {
+    background-color: #ffc107;
+}
+
+.timeline-danger::after {
+    background-color: #dc3545;
+}
+
+.timeline-badge {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    color: white;
+    font-size: 16px;
+}
+
+.timeline-success .timeline-badge {
+    background-color: #28a745;
+}
+
+.timeline-warning .timeline-badge {
+    background-color: #ffc107;
+}
+
+.timeline-danger .timeline-badge {
+    background-color: #dc3545;
+}
+
+.timeline-content {
+    flex: 1;
+}
+
+.timeline-content h6 {
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<!-- Template Variables for JavaScript -->
+<script type="application/json" id="pnc-data">
+{
+    "breastfeeding_1hour": {{ indicators.breastfeeding_1hour | default(0) }},
+    "pnc_24hours": {{ indicators.pnc_24hours | default(0) }},
+    "pnc_6days": {{ indicators.pnc_6days | default(0) }},
+    "pnc_6weeks": {{ indicators.pnc_6weeks | default(0) }}
+}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Set progress bar widths from data attributes
+    document.addEventListener('DOMContentLoaded', function() {
+        const progressBars = [
+            { id: 'retention-24h-6d-bar', dataAttr: 'data-width' },
+            { id: 'retention-6d-6w-bar', dataAttr: 'data-width' },
+            { id: 'continuum-completion-bar', dataAttr: 'data-width' }
+        ];
+        
+        progressBars.forEach(bar => {
+            const element = document.getElementById(bar.id);
+            if (element) {
+                const width = element.getAttribute(bar.dataAttr);
+                element.style.width = width + '%';
+            }
+        });
+    });
+
+    // Load data from JSON script tag
+    const pncData = JSON.parse(document.getElementById('pnc-data').textContent);
+
+    // PNC Coverage Chart
+    const ctx = document.getElementById('pncChart').getContext('2d');
+    const pncChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['1 Hour', '24 Hours', '6 Days', '6 Weeks'],
+            datasets: [{
+                label: 'PNC Coverage (%)',
+                data: [
+                    pncData.breastfeeding_1hour,
+                    pncData.pnc_24hours,
+                    pncData.pnc_6days,
+                    pncData.pnc_6weeks
+                ],
+                borderColor: '#007bff',
+                backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: function(context) {
+                    const value = context.parsed.y;
+                    const index = context.dataIndex;
+                    
+                    if (index === 0 || index === 1) { // 1 hour, 24 hours
+                        return value >= 100 ? '#28a745' : value >= 90 ? '#ffc107' : '#dc3545';
+                    } else { // 6 days, 6 weeks
+                        return value >= 75 ? '#28a745' : value >= 60 ? '#ffc107' : '#dc3545';
+                    }
+                },
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 110,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return 'Coverage: ' + context.parsed.y.toFixed(1) + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Export functions
+    function exportData(format) {
+        if (format === 'pdf') {
+            window.open('/api/export/pnc/pdf', '_blank');
+        } else if (format === 'excel') {
+            window.open('/api/export/pnc/excel', '_blank');
+        }
+    }
+
+    function viewTrends() {
+        window.location.href = '/analysis/trends/pnc';
+    }
+
+    function generateReport() {
+        window.location.href = '/reports/pnc';
+    }
+
+    // Make table sortable and searchable
+    $(document).ready(function() {
+        $('#pncTable').DataTable({
+            "pageLength": 10,
+            "order": [],
+            "columnDefs": [
+                {"orderable": false, "targets": [5]}
+            ]
+        });
+    });
+</script>
+{% endblock %}

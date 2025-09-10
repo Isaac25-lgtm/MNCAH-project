@@ -1,0 +1,542 @@
+{% extends "base.html" %}
+
+{% block title %}Antenatal Care (ANC) Analysis - MOH MNCAH Dashboard{% endblock %}
+
+{% block breadcrumb %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('dashboard.index') }}">Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('analysis.index') }}">Analysis</a></li>
+        <li class="breadcrumb-item active">ANC Analysis</li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block page_header %}
+<div class="page-header">
+    <div class="row align-items-center">
+        <div class="col">
+            <h1 class="h2 mb-0">
+                <i class="fas fa-baby text-primary me-2"></i>
+                Antenatal Care (ANC) Analysis
+            </h1>
+            <p class="text-muted mb-0">Comprehensive analysis of antenatal care indicators</p>
+        </div>
+        <div class="col-auto">
+            <div class="btn-group" role="group">
+                <button class="btn btn-outline-primary me-2" onclick="exportData('pdf')">
+                    <i class="fas fa-file-pdf me-1"></i> Export PDF
+                </button>
+                <button class="btn btn-outline-success" onclick="exportData('excel')">
+                    <i class="fas fa-file-excel me-1"></i> Export Excel
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<!-- Key Metrics Cards -->
+<div class="row mb-4">
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card stats-card border-primary h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <div class="small fw-bold text-primary text-uppercase mb-1">
+                            ANC 1 Coverage
+                        </div>
+                        <div class="h4 mb-0 fw-bold text-gray-800">
+                            {{ "%.1f"|format(indicators.get('anc_1_coverage', 0)) }}%
+                        </div>
+                        <small class="text-muted">Target: ≥100%</small>
+                    </div>
+                    <div class="ms-3">
+                        <i class="fas fa-calendar-check fa-2x 
+                           {% if indicators.get('anc_1_coverage', 0) >= 100 %}text-success
+                           {% elif indicators.get('anc_1_coverage', 0) >= 70 %}text-warning
+                           {% else %}text-danger{% endif %}"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card stats-card border-success h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <div class="small fw-bold text-success text-uppercase mb-1">
+                            ANC 1st Trimester
+                        </div>
+                        <div class="h4 mb-0 fw-bold text-gray-800">
+                            {{ "%.1f"|format(indicators.get('anc_1st_trimester', 0)) }}%
+                        </div>
+                        <small class="text-muted">Target: ≥45%</small>
+                    </div>
+                    <div class="ms-3">
+                        <i class="fas fa-clock fa-2x 
+                           {% if indicators.get('anc_1st_trimester', 0) >= 45 %}text-success
+                           {% elif indicators.get('anc_1st_trimester', 0) >= 30 %}text-warning
+                           {% else %}text-danger{% endif %}"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card stats-card border-info h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <div class="small fw-bold text-info text-uppercase mb-1">
+                            ANC 4 Coverage
+                        </div>
+                        <div class="h4 mb-0 fw-bold text-gray-800">
+                            {{ "%.1f"|format(indicators.get('anc_4_coverage', 0)) }}%
+                        </div>
+                        <small class="text-muted">Target: ≥100%</small>
+                    </div>
+                    <div class="ms-3">
+                        <i class="fas fa-clipboard-list fa-2x 
+                           {% if indicators.get('anc_4_coverage', 0) >= 100 %}text-success
+                           {% elif indicators.get('anc_4_coverage', 0) >= 70 %}text-warning
+                           {% else %}text-danger{% endif %}"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6 mb-3">
+        <div class="card stats-card border-warning h-100">
+            <div class="card-body">
+                <div class="d-flex align-items-center">
+                    <div class="flex-grow-1">
+                        <div class="small fw-bold text-warning text-uppercase mb-1">
+                            ANC 8 Coverage
+                        </div>
+                        <div class="h4 mb-0 fw-bold text-gray-800">
+                            {{ "%.1f"|format(indicators.get('anc_8_coverage', 0)) }}%
+                        </div>
+                        <small class="text-muted">Target: ≥100%</small>
+                    </div>
+                    <div class="ms-3">
+                        <i class="fas fa-heartbeat fa-2x 
+                           {% if indicators.get('anc_8_coverage', 0) >= 100 %}text-success
+                           {% elif indicators.get('anc_8_coverage', 0) >= 70 %}text-warning
+                           {% else %}text-danger{% endif %}"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ANC Service Delivery Analysis -->
+<div class="row mb-4">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h6 class="mb-0 fw-bold">
+                    <i class="fas fa-chart-bar me-2"></i>
+                    ANC Service Coverage
+                </h6>
+            </div>
+            <div class="card-body">
+                <canvas id="ancCoverageChart" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card shadow h-100">
+            <div class="card-header bg-success text-white">
+                <h6 class="mb-0 fw-bold">
+                    <i class="fas fa-shield-alt me-2"></i>
+                    Preventive Services
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-3">
+                    <div class="h4 text-{{ 'success' if indicators.get('ipt3_coverage', 0) >= 85 else 'warning' if indicators.get('ipt3_coverage', 0) >= 65 else 'danger' }}">
+                        {{ "%.1f"|format(indicators.get('ipt3_coverage', 0)) }}%
+                    </div>
+                    <div class="text-muted">IPT3 Coverage</div>
+                    <small class="text-muted">Target: ≥85%</small>
+                </div>
+                
+                <div class="text-center mb-3">
+                    <div class="h4 text-{{ 'success' if indicators.get('llin_coverage', 0) >= 100 else 'warning' if indicators.get('llin_coverage', 0) >= 70 else 'danger' }}">
+                        {{ "%.1f"|format(indicators.get('llin_coverage', 0)) }}%
+                    </div>
+                    <div class="text-muted">LLIN Coverage</div>
+                    <small class="text-muted">Target: ≥100%</small>
+                </div>
+                
+                <div class="text-center">
+                    <div class="h4 text-{{ 'success' if indicators.get('iron_folic_anc1', 0) >= 75 else 'warning' if indicators.get('iron_folic_anc1', 0) >= 60 else 'danger' }}">
+                        {{ "%.1f"|format(indicators.get('iron_folic_anc1', 0)) }}%
+                    </div>
+                    <div class="text-muted">Iron/Folic at ANC1</div>
+                    <small class="text-muted">Target: ≥75%</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detailed Indicators Table -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="mb-0 fw-bold text-primary">ANC Indicators Summary</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover" id="ancTable">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Indicator</th>
+                                <th>Value</th>
+                                <th>Target</th>
+                                <th>Status</th>
+                                <th>Gap to Target</th>
+                                <th>Action Required</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% set anc_indicators = [
+                                ('anc_1_coverage', 'ANC 1 Coverage', 'First antenatal visit attendance', 100, '≥100%'),
+                                ('anc_1st_trimester', 'ANC 1st Trimester', 'Early booking within 12 weeks', 45, '≥45%'),
+                                ('anc_4_coverage', 'ANC 4 Coverage', 'At least 4 antenatal visits', 100, '≥100%'),
+                                ('anc_8_coverage', 'ANC 8 Coverage', '8+ contacts (WHO 2016 guideline)', 100, '≥100%'),
+                                ('ipt3_coverage', 'IPT3 Coverage', 'Malaria prevention in pregnancy', 85, '≥85%'),
+                                ('hb_testing', 'HB Testing', 'Anemia screening at ANC1', 75, '≥75%'),
+                                ('iron_folic_anc1', 'Iron/Folic Acid at ANC1', 'Supplementation at first visit', 75, '≥75%'),
+                                ('llin_coverage', 'LLIN Coverage', 'Bed net distribution at ANC', 100, '≥100%'),
+                                ('ultrasound_coverage', 'Ultrasound Coverage', 'Obstetric ultrasound during ANC', 100, '≥100%')
+                            ] %}
+                            
+                            {% for indicator_key, indicator_name, description, target, target_display in anc_indicators %}
+                            {% set value = indicators.get(indicator_key, 0) %}
+                            {% set validation_status = validations.get(indicator_key, 'unknown') %}
+                            <tr class="{% if validation_status == 'green' %}table-success{% elif validation_status == 'yellow' %}table-warning{% elif validation_status == 'red' %}table-danger{% else %}table-light{% endif %}">
+                                <td>
+                                    <strong>{{ indicator_name }}</strong>
+                                    <br><small class="text-muted">{{ description }}</small>
+                                </td>
+                                <td>{{ "%.1f"|format(value) }}%</td>
+                                <td>{{ target_display }}</td>
+                                <td>
+                                    {% if validation_status == 'green' %}
+                                        <span class="badge bg-success">Good</span>
+                                    {% elif validation_status == 'yellow' %}
+                                        <span class="badge bg-warning">Needs Attention</span>
+                                    {% elif validation_status == 'red' %}
+                                        <span class="badge bg-danger">Critical</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Unknown</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if value < target %}
+                                        {{ "%.1f"|format(target - value) }}% below target
+                                    {% else %}
+                                        {{ "%.1f"|format(value - target) }}% above target
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if validation_status == 'red' or value < (target * 0.7) %}
+                                        <span class="text-danger">Immediate intervention needed</span>
+                                    {% elif validation_status == 'yellow' or value < target %}
+                                        <span class="text-warning">Improvement required</span>
+                                    {% else %}
+                                        <span class="text-success">Maintain performance</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Data Quality Issues -->
+{% if validation_errors %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-danger shadow">
+            <div class="card-header bg-danger text-white">
+                <h6 class="mb-0 fw-bold">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Data Quality Issues
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <h6>The following validation errors were detected:</h6>
+                    <ul class="mb-0">
+                        {% for error in validation_errors %}
+                        <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                    <small class="text-muted">
+                        <strong>Note:</strong> These values are still displayed but marked for review.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Recommendations -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-header bg-info text-white">
+                <h6 class="mb-0 fw-bold">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    Recommendations for Improvement
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-primary">Priority Actions:</h6>
+                        <ul class="list-unstyled">
+                            {% if indicators.get('anc_1_coverage', 0) < 70 %}
+                            <li class="mb-2">
+                                <i class="fas fa-exclamation-circle text-danger me-2"></i>
+                                <strong>ANC 1:</strong> Strengthen community mobilization and outreach programs
+                            </li>
+                            {% endif %}
+                            {% if indicators.get('anc_1st_trimester', 0) < 30 %}
+                            <li class="mb-2">
+                                <i class="fas fa-exclamation-circle text-danger me-2"></i>
+                                <strong>Early Booking:</strong> Enhance early pregnancy detection and referral systems
+                            </li>
+                            {% endif %}
+                            {% if indicators.get('ipt3_coverage', 0) < 65 %}
+                            <li class="mb-2">
+                                <i class="fas fa-exclamation-circle text-danger me-2"></i>
+                                <strong>IPT3:</strong> Improve supply chain management for IPT medications
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-success">Best Practices:</h6>
+                        <ul class="list-unstyled">
+                            {% if indicators.get('anc_1_coverage', 0) >= 100 %}
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <strong>ANC 1:</strong> Excellent coverage - maintain current strategies
+                            </li>
+                            {% endif %}
+                            {% if indicators.get('anc_8_coverage', 0) >= 100 %}
+                            <li class="mb-2">
+                                <i class="fas fa-check-circle text-success me-2"></i>
+                                <strong>ANC 8:</strong> WHO 2016 model successfully implemented
+                            </li>
+                            {% endif %}
+                            <li class="mb-2">
+                                <i class="fas fa-info-circle text-info me-2"></i>
+                                <strong>General:</strong> Continue quality improvement initiatives
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Action Buttons -->
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between">
+            <a href="{{ url_for('dashboard.index') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+            </a>
+            <div>
+                <button class="btn btn-outline-primary" onclick="viewTrends()">
+                    <i class="fas fa-chart-line me-1"></i> View Historical Trends
+                </button>
+                <button class="btn btn-primary" onclick="generateReport()">
+                    <i class="fas fa-file-alt me-1"></i> Generate Report
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- ANC Indicators Data for Charts -->
+<script type="application/json" id="anc-data">
+{
+    "anc_1_coverage": {{ indicators.get('anc_1_coverage', 0) }},
+    "anc_1st_trimester": {{ indicators.get('anc_1st_trimester', 0) }},
+    "anc_4_coverage": {{ indicators.get('anc_4_coverage', 0) }},
+    "anc_8_coverage": {{ indicators.get('anc_8_coverage', 0) }},
+    "ipt3_coverage": {{ indicators.get('ipt3_coverage', 0) }},
+    "hb_testing": {{ indicators.get('hb_testing', 0) }},
+    "iron_folic_anc1": {{ indicators.get('iron_folic_anc1', 0) }},
+    "llin_coverage": {{ indicators.get('llin_coverage', 0) }},
+    "ultrasound_coverage": {{ indicators.get('ultrasound_coverage', 0) }}
+}
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize ANC Coverage Chart
+    initializeANCChart();
+    
+    // Initialize DataTable for indicators
+    $('#ancTable').DataTable({
+        "pageLength": 10,
+        "order": [],
+        "columnDefs": [
+            {"orderable": false, "targets": [5]}
+        ],
+        "language": {
+            "search": "Search indicators:",
+            "lengthMenu": "Show _MENU_ indicators"
+        }
+    });
+});
+
+function initializeANCChart() {
+    const ctx = document.getElementById('ancCoverageChart');
+    if (!ctx) return;
+    
+    // Load data from JSON script tag
+    const ancData = JSON.parse(document.getElementById('anc-data').textContent);
+    
+    const chartData = {
+        labels: ['ANC 1', 'ANC 1st Tri', 'ANC 4', 'ANC 8', 'IPT3', 'HB Test', 'Iron/Folic', 'LLIN', 'Ultrasound'],
+        values: [
+            ancData.anc_1_coverage,
+            ancData.anc_1st_trimester,
+            ancData.anc_4_coverage,
+            ancData.anc_8_coverage,
+            ancData.ipt3_coverage,
+            ancData.hb_testing,
+            ancData.iron_folic_anc1,
+            ancData.llin_coverage,
+            ancData.ultrasound_coverage
+        ],
+        targets: [100, 45, 100, 100, 85, 75, 75, 100, 100]
+    };
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: 'Current Coverage (%)',
+                data: chartData.values,
+                backgroundColor: chartData.values.map((value, index) => {
+                    const target = chartData.targets[index];
+                    return value >= target ? '#28a745' : 
+                           value >= (target * 0.7) ? '#ffc107' : '#dc3545';
+                }),
+                borderColor: '#ffffff',
+                borderWidth: 1
+            }, {
+                label: 'Target (%)',
+                data: chartData.targets,
+                type: 'line',
+                borderColor: '#007bff',
+                backgroundColor: 'transparent',
+                borderWidth: 2,
+                pointBackgroundColor: '#007bff',
+                pointBorderColor: '#ffffff',
+                pointBorderWidth: 2,
+                pointRadius: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 120,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.dataset.label + ': ' + context.parsed.y.toFixed(1) + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Export functions
+function exportData(format) {
+    MOH.showLoading('Preparing export...');
+    
+    const url = format === 'pdf' ? 
+        '{{ url_for("reports.export_anc_pdf") }}' : 
+        '{{ url_for("reports.export_anc_excel") }}';
+    
+    fetch(url)
+        .then(response => {
+            if (response.ok) {
+                return response.blob();
+            }
+            throw new Error('Export failed');
+        })
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ANC_Analysis_${new Date().toISOString().split('T')[0]}.${format}`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            MOH.showMessage(`ANC analysis exported successfully`, 'success');
+        })
+        .catch(error => {
+            console.error('Export error:', error);
+            MOH.showMessage('Export failed. Please try again.', 'error');
+        })
+        .finally(() => {
+            MOH.hideLoading();
+        });
+}
+
+function viewTrends() {
+    window.location.href = '{{ url_for("analysis.trends") }}?category=anc';
+}
+
+function generateReport() {
+    window.location.href = '{{ url_for("reports.anc_report") }}';
+}
+</script>
+{% endblock %}
